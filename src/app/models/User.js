@@ -13,7 +13,7 @@ class User extends Model {
       cpf: Sequelize.INTEGER,
       birth: Sequelize.DATE,
       points: Sequelize.INTEGER,
-      cup_id: Sequelize.STRING
+     // cup_id: Sequelize.STRING
     }, 
     {
       sequelize,
