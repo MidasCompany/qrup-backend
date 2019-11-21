@@ -3,8 +3,13 @@ import Sequelize, { Model } from 'sequelize';
 class UserCupons extends Model {
   static init(sequelize){
     super.init({
-      user_id: Sequelize.INTEGER,
-      cupom_id: Sequelize.INTEGER
+      id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+      },
+      user_id: Sequelize.UUID,
+      cupom_id: Sequelize.UUID
     }, 
     {
       sequelize,

@@ -2,9 +2,8 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
       return queryInterface.createTable('employees', { 
         id: {
-          type: Sequelize.INTEGER,
-          allowNull: false, 
-          autoIncrement: true,
+          type: Sequelize.UUID,
+          defaultValue: Sequelize.UUIDV4,
           primaryKey: true,
         },
         name: {
@@ -16,12 +15,15 @@ module.exports = {
           allowNull: false,
         },
         company_id: {
-          type: Sequelize.INTEGER, 
+          type: Sequelize.UUID, 
           references: {model: 'companies', key: 'id'},
           onUpdate: 'CASCADE',
-          onDelete: 'SET NULL',  
-          allowNull: false     
+          onDelete: 'SET NULL',   
         },      
+        employee_type: {
+          type: Sequelize.ENUM('dono', 'gerente', 'empregado'),
+          allowNull: false,
+        },
         created_at: {
           type: Sequelize.DATE,
           allowNull: false,

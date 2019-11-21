@@ -18,5 +18,7 @@ routes.post('/company-cupons', CompanyCuponsController.store);
 routes.post('/user-cupons', UserCuponsController.store);
 //routes.post('/sessions', SessionController.store);
 
+//routes.get('/users', UserController.store);
+
 
 export default routes;

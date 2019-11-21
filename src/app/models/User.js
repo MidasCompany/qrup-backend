@@ -4,16 +4,19 @@ import bcrypt from 'bcryptjs';
 class User extends Model {
   static init(sequelize){
     super.init({
+      id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+      },
       name: Sequelize.STRING,
       email: Sequelize.STRING,
       password: Sequelize.VIRTUAL,
       password_hash: Sequelize.STRING,
-      provider: Sequelize.BOOLEAN,
       contact: Sequelize.INTEGER,
       cpf: Sequelize.INTEGER,
       birth: Sequelize.DATE,
       points: Sequelize.INTEGER,
-     // cup_id: Sequelize.STRING
     }, 
     {
       sequelize,

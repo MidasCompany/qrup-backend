@@ -3,19 +3,18 @@ module.exports = {
       Example:
       return queryInterface.createTable('user_cupons', { 
         id: {
-          type: Sequelize.INTEGER, 
-          allowNull: false,
+          type: Sequelize.UUID,
+          defaultValue: Sequelize.UUIDV4,
           primaryKey: true,
-          autoIncrement: true,
-        }, 
+        },
         user_id: {
-          type: Sequelize.INTEGER, 
+          type: Sequelize.UUID, 
           references: {model: 'users', key: 'id'},
           onUpdate: 'CASCADE',
           onDelete: 'SET NULL' 
         },
         cupom_id: {
-          type: Sequelize.INTEGER,  
+          type: Sequelize.UUID,  
           references: {model: 'company_cupons', key: 'id'},
           onUpdate: 'CASCADE',
           onDelete: 'SET NULL'

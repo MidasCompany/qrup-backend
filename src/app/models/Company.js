@@ -3,6 +3,11 @@ import Sequelize, { Model } from 'sequelize';
 class Company extends Model {
   static init(sequelize){
     super.init({
+      id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+      },
       name: Sequelize.STRING,
       address: Sequelize.STRING,
       password_hash: Sequelize.STRING,

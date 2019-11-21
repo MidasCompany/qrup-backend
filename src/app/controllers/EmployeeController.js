@@ -8,12 +8,13 @@ class EmployeeController {
       return res.status(400).json({ error: 'Employee already exists' });
     }
 
-    const { id, name, cpf, company_id } = await Employee.create(req.body);
+    const { id, name, cpf, employee_type, company_id } = await Employee.create(req.body);
 
     return res.json({
       id, 
       name, 
       cpf, 
+      employee_type,
       company_id
     });
   }
