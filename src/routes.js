@@ -10,6 +10,8 @@ import EmployeeController from './app/controllers/EmployeeController';
 import CompanyCuponsController from './app/controllers/CompanyCuponsController';
 import UserCuponsController from './app/controllers/UserCuponsController';
 
+import authMiddleware from './app/middlewares/auth';
+
 const routes = new Router();
 const upload = multer(multerConfig);
 
@@ -19,16 +21,15 @@ routes.post('/cups', CupController.store);
 routes.post('/employees', EmployeeController.store);
 routes.post('/company-cupons', CompanyCuponsController.store);
 routes.post('/user-cupons', UserCuponsController.store);
+routes.post('/sessions', SessionController.store);
 
 routes.post('/files', upload.single('file'), (req, res) => {
   return res.json({ ok: true });
 })
 
-routes.post('/sessions', SessionController.store);
-
 //routes.get('/users', UserController.store);
 
-//routes.put('/users', UserController.update);
+routes.put('/users', authMiddleware, UserController.update);
 
 
 export default routes;
