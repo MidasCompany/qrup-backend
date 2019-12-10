@@ -1,18 +1,10 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("employees", {
+    return queryInterface.createTable("company_coupons", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
-      },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      cpf: {
-        type: Sequelize.STRING,
         allowNull: false
       },
       company_id: {
@@ -21,9 +13,8 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "SET NULL"
       },
-      employee_type: {
-        type: Sequelize.ENUM("dono", "gerente", "empregado"),
-        allowNull: false
+      points: {
+        type: Sequelize.INTEGER
       },
       created_at: {
         type: Sequelize.DATE,
@@ -37,6 +28,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("employees");
+    return queryInterface.dropTable("company-coupons");
   }
 };

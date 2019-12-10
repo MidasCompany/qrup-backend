@@ -1,14 +1,11 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("cups", {
+    return queryInterface.createTable("user-points", {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
-      },
-      description: {
-        type: Sequelize.STRING
       },
       user_id: {
         type: Sequelize.INTEGER,
@@ -16,24 +13,13 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "SET NULL"
       },
-      type: {
-        type: Sequelize.STRING
-      },
-      qr: {
-        type: Sequelize.STRING
-      },
-      created_at: {
-        type: Sequelize.DATE,
-        allowNull: false
-      },
-      updated_at: {
-        type: Sequelize.DATE,
-        allowNull: false
+      balance: {
+        type: Sequelize.INTEGER
       }
     });
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("cups");
+    return queryInterface.dropTable("user-points");
   }
 };
