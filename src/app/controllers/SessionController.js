@@ -1,9 +1,26 @@
 import jwt from 'jsonwebtoken'; 
 import User from '../models/User';
 import authConfig from '../../config/auth';
+import * as Yup from 'yup';
 
 class SessionController {
   async store(req, res) {
+      const schemaEmail = Yup.object().shape({
+        email: Yup.string().email().required(),
+      });
+  
+      if (!(await schemaEmail.isValid(req.body))) {
+        return res.status(400).json({ error: 'Email Required' });
+      }
+//-----------------------------------------------------------------------------
+      const schemaPassword = Yup.object().shape({
+        password: Yup.string().required().min(6),
+      });
+  
+      if (!(await schemaPassword.isValid(req.body))) {
+        return res.status(400).json({ error: 'Password Required' });
+      }
+
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
 

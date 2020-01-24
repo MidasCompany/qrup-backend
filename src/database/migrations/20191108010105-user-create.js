@@ -2,9 +2,9 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable("users", {
       id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
-        autoIncrement: true,
         allowNull: false
       },
       name: {
@@ -29,7 +29,7 @@ module.exports = {
         allowNull: false,
         unique: true
       },
-      birthdate: {
+      birth: {
         type: Sequelize.DATE,
         allowNull: false
       },
@@ -38,7 +38,7 @@ module.exports = {
         defaultValue: 0
       },
       active: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
         //allowNull: false,
       },
 

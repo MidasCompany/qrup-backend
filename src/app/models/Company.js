@@ -19,6 +19,10 @@ class Company extends Model {
       sequelize,
     });
   }
+  static associate(models) {
+    this.hasMany(models.Employee, { foreignKey: 'id'});
+    this.hasMany(models.CompanyCoupons, { foreignKey: 'id'});
+  }
 }
 
 export default Company;

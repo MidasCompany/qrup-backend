@@ -1,4 +1,5 @@
 import Cup from '../models/Cup';
+import User from '../models/User';
 
 class CupController {
   async store(req, res){
@@ -9,8 +10,26 @@ class CupController {
       id, 
       description,
       type,
-      qr
+      qr,
     });
+  }
+
+  async index(req, res){
+    const cups = await Cup.findAll({
+      attributes: ['description', 'type', 'qr'],
+      include: [
+        {
+          model: User,
+          attributes: ['name', 'email', 'contact', 'cpf', 'points'],
+        }
+      ],
+    });
+
+    if (cups < 1){
+      return res.status(400).json({ error: 'No cups registered' });
+    }
+
+    return res.json(cups);
   }
 }
 

@@ -10,7 +10,10 @@ class Employee extends Model {
       },
       name: Sequelize.STRING,
       cpf: Sequelize.INTEGER,
-      company_id: Sequelize.UUID,
+      company_id:{ 
+        type: Sequelize.UUID,
+        allowNull: false
+      },
       employee_type: Sequelize.ENUM('dono', 'gerente', 'empregado')
     }, 
     {
@@ -19,6 +22,9 @@ class Employee extends Model {
     return this;
   }
 
+  static associate(models) {
+    this.belongsTo(models.Company, { foreignKey: 'company_id'});
+  }
 }
 
 export default Employee;

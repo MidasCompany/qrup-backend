@@ -2,21 +2,20 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable("employees", {
       id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
       },
       name: {
         type: Sequelize.STRING,
         allowNull: false
       },
       cpf: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       company_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: { model: "companies", key: "id" },
         onUpdate: "CASCADE",
         onDelete: "SET NULL"

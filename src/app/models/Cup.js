@@ -10,12 +10,19 @@ class Cup extends Model {
       },
       description: Sequelize.STRING,
       type: Sequelize.STRING,
-      qr: Sequelize.STRING
+      qr: Sequelize.STRING,
+      user_id:{ 
+        type: Sequelize.UUID,
+        allowNull: false
+      },
     }, 
     {
       sequelize,
     });
     return this;
+  }
+  static associate(models) {
+    this.belongsTo(models.User, { foreignKey: 'user_id'});
   }
 }
 

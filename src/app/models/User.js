@@ -6,8 +6,9 @@ class User extends Model {
     super.init(
       {
         id: {
-          type: Sequelize.INTEGER,
-          primaryKey: true
+          type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
         },
         name: Sequelize.STRING,
         email: Sequelize.STRING,
@@ -29,6 +30,11 @@ class User extends Model {
     });
 
     return this;
+  }
+
+  static associate(models) {
+    this.hasMany(models.Cup, { foreignKey: 'id'});
+    this.hasMany(models.UserCoupons, { foreignKey: 'id'});
   }
 
   checkPassword(password) {

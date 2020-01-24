@@ -1,20 +1,19 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable("user-coupon", {
+    return queryInterface.createTable("user-coupons", {
       id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false
+        type: Sequelize.UUID,
+          defaultValue: Sequelize.UUIDV4,
+          primaryKey: true,
       },
       user_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.UUID,
         references: { model: "users", key: "id" },
         onUpdate: "CASCADE",
         onDelete: "SET NULL"
       },
-      coupon_id: {
-        type: Sequelize.INTEGER,
+      coupom_id: {
+        type: Sequelize.UUID,
         references: { model: "company_coupons", key: "id" },
         onUpdate: "CASCADE",
         onDelete: "SET NULL"
@@ -23,6 +22,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("user-coupon");
+    return queryInterface.dropTable("user-coupons");
   }
 };
