@@ -17,6 +17,11 @@ class User extends Model {
         contact: Sequelize.STRING,
         cpf: Sequelize.STRING,
         birth: Sequelize.DATE,
+        avatar_id: {
+          type: Sequelize.UUID,
+          defaultValue: Sequelize.UUIDV4,
+          primaryKey: true,
+        },
         points: Sequelize.INTEGER
       },
       {
@@ -35,7 +40,7 @@ class User extends Model {
   static associate(models) {
     this.hasMany(models.Cup, { foreignKey: 'id'});
     this.hasMany(models.UserCoupons, { foreignKey: 'id'});
-    this.hasMany(models.File, { foreignKey: 'id'});
+    this.belongsTo(models.File, { foreignKey: 'avatar_id'});
   }
 
   checkPassword(password) {

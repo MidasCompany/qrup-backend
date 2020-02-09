@@ -8,14 +8,18 @@ class UserCoupons extends Model {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
-      user_id: Sequelize.UUID,
+      user_id: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
+        primaryKey: true,
+      },
       coupom_id: Sequelize.UUID
     }, 
     {
       sequelize,
     });
     return this;
-  }
+  } 
   
   static associate(models) {
     this.belongsTo(models.User, { foreignKey: 'user_id'});

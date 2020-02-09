@@ -65,6 +65,7 @@ class UserController {
     const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string().email(),
+      avatar_id: Yup.string(),
       oldPassword: Yup.string().min(6),
       password: Yup.string().min(6).when('oldPassword', (oldPassword, field) => 
         oldPassword ? field.required(): field
@@ -93,7 +94,7 @@ class UserController {
       return res.status(401).json({ error: "Password does not match" });
     }
 
-    const { id, name, cpf, birth, contact, points } = await user.update(req.body);
+    const { id, name, cpf, birth, contact, avatar_id, points } = await user.update(req.body);
 
     return res.json({
       id, 
@@ -102,6 +103,7 @@ class UserController {
       cpf, 
       birth, 
       contact,
+      avatar_id,
       points
     });
   }
@@ -111,7 +113,12 @@ class UserController {
       //where: { points: 0 },
       //where: { points: 1 },
       attributes: ['id', 'name', 'email', 'points'],
-      include: [File],
+      include: [
+        {
+          model: File,
+          attributes: ['name', 'path'],
+        }
+      ],
     });
 
     if (users < 1){

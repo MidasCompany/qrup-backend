@@ -1,4 +1,5 @@
 import File from '../models/File';
+//import User from '../models/User';
 
 class FileController {
   async store(req, res) {
@@ -15,6 +16,7 @@ class FileController {
   async index(req, res) {
     const files = await File.findAll({
       attributes: ['id', 'name', 'path'],
+
     });
 
     if (files < 1){

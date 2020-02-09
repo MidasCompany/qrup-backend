@@ -16,7 +16,12 @@ class CompanyCouponsController {
   async index(req, res){
     const coupons = await CompanyCoupons.findAll({
       attributes: ['id', 'company_id', 'points'],
-      include: [Company],
+      include: [
+        {
+          model: Company,
+          attributes: ['name', 'address', 'contact', 'representative'],
+        }
+      ],
     });
 
     if (coupons < 1){

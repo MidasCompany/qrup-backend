@@ -1,6 +1,7 @@
 import Employee from '../models/Employee';
 import * as Yup from 'yup';
 import Company from '../models/Company';
+import File from '../models/File';
 
 class EmployeeController {
   async store(req, res){
@@ -18,12 +19,21 @@ class EmployeeController {
       return res.status(400).json({ error: 'Name validation fails' });
     }
 //------------------------------------------------------------------------------------------------------------
+    function checkCPF(str){
+      const regex = /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/;
+      return regex.test(String(str).toLowerCase());
+    }
+
     const schemaCpf = Yup.object().shape({
       cpf: Yup.string().required(),
     });
 
     if (!(await schemaCpf.isValid(req.body))) {
       return res.status(400).json({ error: 'CPF validation fails' });
+    }
+
+    if (!(await checkCPF(req.body.cpf))){
+      return res.status(400).json({ error: 'Invalid CPF' });
     }
 //------------------------------------------------------------------------------------------------------------
     const schemaType = Yup.object().shape({
@@ -41,8 +51,9 @@ class EmployeeController {
     if (!(await schemaCompany.isValid(req.body))) {
       return res.status(400).json({ error: 'Company ID validation fails' });
     }
-//------------------------------------------------------------------------------------------------------------
-    const { id, name, cpf, employee_type, company_id } = await Employee.create(req.body);
+//------------------------------------------------------------------------------------------------------------  
+
+  const { id, name, cpf, employee_type, company_id } = await Employee.create(req.body);
 
     return res.json({
       id, 
@@ -61,6 +72,8 @@ class EmployeeController {
           {
           model: Company,
           attributes: ['name', 'address', 'contact', 'cnpj'],
+          model: File,
+          attributes: ['name', 'path'],
         },
       ],
     })
