@@ -27,6 +27,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable("company-coupons");
+    return queryInterface.dropTable("company_coupons");
   }
 };

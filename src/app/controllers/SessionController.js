@@ -14,7 +14,7 @@ class SessionController {
       }
 //-----------------------------------------------------------------------------
       const schemaPassword = Yup.object().shape({
-        password: Yup.string().required().min(6),
+        password: Yup.string().required(),
       });
   
       if (!(await schemaPassword.isValid(req.body))) {

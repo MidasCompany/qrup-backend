@@ -1,18 +1,11 @@
 import User from '../models/User';
 import * as Yup from 'yup';
-//import File from '../models/File';
-
+import File from '../models/File';
 
 class UserController {
   async store(req, res){
 
-    const schemaPassword = Yup.object().shape({
-      password: Yup.string().required().min(6),
-    });
-
-    if (!(await schemaPassword.isValid(req.body))) {
-      return res.status(400).json({ error: 'Password validation fails' });
-    }
+    
 //---------------------------------------------------------------------------------------------
     const schemaName = Yup.object().shape({
       name: Yup.string().required(),
@@ -22,29 +15,39 @@ class UserController {
       return res.status(400).json({ error: 'Name validation fails' });
     }
   //---------------------------------------------------------------------------------------------
-  const schemaEmail = Yup.object().shape({
-    email: Yup.string().required(),
-  });
+    const schemaEmail = Yup.object().shape({
+      email: Yup.string().required(),
+    });
 
-  if (!(await schemaEmail.isValid(req.body))) {
-    return res.status(400).json({ error: 'Email validation fails' });
-  }
+    if (!(await schemaEmail.isValid(req.body))) {
+      return res.status(400).json({ error: 'Email validation fails' });
+    }
   //----------------------------------------------------------------------------------------------
-  const schemaCpf = Yup.object().shape({
-    cpf: Yup.string().required(),
-  });
-
-  if (!(await schemaCpf.isValid(req.body))) {
-    return res.status(400).json({ error: 'CPF validation fails' });
+  
+  function checkCPF(str){
+    const regex = /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/;
+    return regex.test(String(str).toLowerCase());
   }
 
-    //const userExists = await User.findOne({ where: { email : req.body.email } });
+    const schemaCpf = Yup.object().shape({
+      cpf: Yup.string().required(),
+    });
 
-    //if (userExists){
-      //return res.status(400).json({ error: 'User already exists' });
-    //}
+    if (!(await schemaCpf.isValid(req.body))) {
+      return res.status(400).json({ error: 'CPF validation fails' });
+    }
 
-    const { id, name, email, cpf, birth, contact, points, } = await User.create(req.body);
+    if (!(await checkCPF(req.body.cpf))){
+      return res.status(400).json({ error: 'Invalid CPF' });
+    }
+    
+    const userExists = await User.findOne({ where: { email : req.body.email } });
+
+    if (userExists){
+      return res.status(400).json({ error: 'User already exists' });
+    }
+    
+    const { id, name, email, cpf, birth, contact, points } = await User.create(req.body);
 
     return res.json({
       id, 
@@ -53,7 +56,7 @@ class UserController {
       cpf, 
       birth, 
       contact,
-      points,
+      points
     });
   }
 
@@ -108,7 +111,7 @@ class UserController {
       //where: { points: 0 },
       //where: { points: 1 },
       attributes: ['id', 'name', 'email', 'points'],
-  //    include: [File],
+      include: [File],
     });
 
     if (users < 1){

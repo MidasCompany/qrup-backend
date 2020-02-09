@@ -1,7 +1,7 @@
 import express from 'express';
 import routes from './routes';
 
-import './config/database';
+import Database from './index';
 
 class App {
   constructor() {
@@ -9,6 +9,7 @@ class App {
 
     this.middlewares();
     this.routes();
+    this.Database;
   }
 
   middlewares() {

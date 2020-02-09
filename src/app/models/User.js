@@ -7,15 +7,15 @@ class User extends Model {
       {
         id: {
           type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        primaryKey: true,
+          defaultValue: Sequelize.UUIDV4,
+          primaryKey: true,
         },
         name: Sequelize.STRING,
         email: Sequelize.STRING,
-        password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
-        contact: Sequelize.INTEGER,
-        cpf: Sequelize.INTEGER,
+        password: Sequelize.VIRTUAL,
+        contact: Sequelize.STRING,
+        cpf: Sequelize.STRING,
         birth: Sequelize.DATE,
         points: Sequelize.INTEGER
       },
@@ -26,7 +26,7 @@ class User extends Model {
     this.addHook("beforeSave", async user => {
       if (user.password) {
         user.password_hash = await bcrypt.hash(user.password, 8);
-      }
+      } 
     });
 
     return this;
@@ -35,6 +35,7 @@ class User extends Model {
   static associate(models) {
     this.hasMany(models.Cup, { foreignKey: 'id'});
     this.hasMany(models.UserCoupons, { foreignKey: 'id'});
+    this.hasMany(models.File, { foreignKey: 'id'});
   }
 
   checkPassword(password) {

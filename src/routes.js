@@ -9,7 +9,7 @@ import CupController from './app/controllers/CupController';
 import EmployeeController from './app/controllers/EmployeeController';
 import CompanyCouponsController from './app/controllers/CompanyCouponsController';
 import UserCouponsController from './app/controllers/UserCouponsController';
-//import FileController from './app/controllers/FileController';
+import FileController from './app/controllers/FileController';
 
 import authMiddleware from "./app/middlewares/auth";
 
@@ -24,7 +24,7 @@ routes.post("/company-coupons", CompanyCouponsController.store);
 routes.post("/user-coupons", UserCouponsController.store);
 routes.post("/sessions", SessionController.store);
 
-//routes.post('/files', upload.single('file'), FileController.store);
+routes.post('/files', upload.single('file'), FileController.store);
 
 routes.get('/users', UserController.index);
 routes.get('/employees', EmployeeController.index);
@@ -32,7 +32,7 @@ routes.get('/companies', CompanyController.index);
 routes.get('/company-coupons', CompanyCouponsController.index);
 routes.get('/cups', CupController.index);
 routes.get('/user-coupons', UserCouponsController.index);
-//routes.get('/files', FileController.index);
+routes.get('/files', FileController.index);
 
 routes.put("/users", authMiddleware, UserController.update);
 
