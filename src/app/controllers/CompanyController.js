@@ -62,7 +62,8 @@ class CompanyController {
       attributes: ['name', 'address', 'contact', 'cnpj', 'representative'],
         include: {
         model: File,
-        attributes: ['name', 'path'],
+        attributes: ['name', 'path', 'url'],
+        as: 'logo'
       },
     })
     

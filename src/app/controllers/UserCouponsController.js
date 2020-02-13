@@ -1,6 +1,7 @@
 import UserCoupons from '../models/UserCoupons';
 import User from '../models/User';
 import CompanyCoupons from '../models/CompanyCoupons';
+import * as Yup from 'yup'; 
 
 class UserCouponsController {
   async store(req, res){
@@ -20,8 +21,13 @@ class UserCouponsController {
         {
           model: User,
           attributes: ['name', 'email', 'contact', 'cpf', 'points'],
+          as: 'user',
         },
-        CompanyCoupons,
+        {
+          model: CompanyCoupons,
+          attributes: ['id', 'company_id', 'points'],
+          as: 'coupom'
+        }
       ],
     });
 

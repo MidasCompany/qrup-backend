@@ -13,8 +13,8 @@ class Company extends Model {
       address: Sequelize.STRING,
       password_hash: Sequelize.STRING,
       password: Sequelize.VIRTUAL,
-      contact: Sequelize.INTEGER,
-      cnpj: Sequelize.INTEGER,
+      contact: Sequelize.STRING,
+      cnpj: Sequelize.STRING,
       representative: Sequelize.STRING,
     }, 
     {
@@ -34,7 +34,7 @@ class Company extends Model {
   static associate(models) {
     this.hasMany(models.Employee, { foreignKey: 'id'});
     this.hasMany(models.CompanyCoupons, { foreignKey: 'id'});
-    this.belongsTo(models.File, { foreignKey: 'logo_id'});
+    this.belongsTo(models.File, { foreignKey: 'logo_id', as: 'logo'});
   }
 }
 

@@ -14,14 +14,29 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false
       },
+      password_hash: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       company_id: {
         type: Sequelize.UUID,
         references: { model: "companies", key: "id" },
         onUpdate: "CASCADE",
         onDelete: "SET NULL"
       },
-      employee_type: {
-        type: Sequelize.ENUM("dono", "gerente", "empregado"),
+      owner: {
+        type:Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+      },
+      manager: {
+        type:Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+      },
+      employee: {
+        type:Sequelize.BOOLEAN,
+        defaultValue: false,
         allowNull: false
       },
       created_at: {

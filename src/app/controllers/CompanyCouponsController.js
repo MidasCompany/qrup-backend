@@ -1,9 +1,18 @@
 import CompanyCoupons from '../models/CompanyCoupons';
 import Company from '../models/Company';
+import * as Yup from 'yup';
 
 class CompanyCouponsController {
   async store(req, res){
+    
+    //-------------------------------------------------------------------------------------------
+    const schemaCompany = Yup.object().shape({
+      company_id: Yup.string().required(),
+    });
 
+    if (!(await schemaCompany.isValid(req.body))) {
+      return res.status(400).json({ error: 'CompanyID is required' });
+    }
     const { id, company_id, points } = await CompanyCoupons.create(req.body);
 
     return res.json({

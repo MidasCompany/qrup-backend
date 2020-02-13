@@ -1,5 +1,6 @@
 import Cup from '../models/Cup';
 import User from '../models/User';
+import File from '../models/File';
 
 class CupController {
   async store(req, res){
@@ -16,11 +17,19 @@ class CupController {
 
   async index(req, res){
     const cups = await Cup.findAll({
+      order: ['type'],
       attributes: ['description', 'type', 'qr'],
       include: [
         {
           model: User,
           attributes: ['name', 'email', 'contact', 'cpf', 'points'],
+          include: [
+            {
+              model: File,
+              attributes: ['name', 'path', 'url'],
+              as: 'avatar'
+            }
+          ]
         }
       ],
     });
