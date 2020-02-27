@@ -10,6 +10,9 @@ class App {
 
     this.middlewares();
     this.routes();
+    this.server.use('/', (req, res) => {
+      res.send(process.env)
+    })
     this.Database;
   }
 
