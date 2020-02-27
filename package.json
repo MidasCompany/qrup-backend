@@ -7,8 +7,8 @@
     "dev": "nodemon src/server.js",
     "clean": "rm -rf build && mkdir build",
     "build-babel": "babel -d ./build ./src -s",
-    "build": "npm run clean && npm run build-babel",
-    "start": "npm run build && node ./build/index.js"
+    "build": "yarn clean && yarn build-babel",
+    "start": "yarn build && node ./build/index.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
