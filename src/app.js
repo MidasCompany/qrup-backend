@@ -1,10 +1,12 @@
-require('dotenv/config');
+if(!process.env.NODE_ENV){
+	require('dotenv/config');
+}
 
 const express = require('express');
 const path = require('path');
 const routes = require('./routes');
 
-const Database = require('./index');
+require('./index');
 
 class App {
   constructor() {
