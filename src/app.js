@@ -1,8 +1,10 @@
-import express from 'express';
-import path from 'path';
-import routes from './routes';
+require('dotenv/config');
 
-import Database from './index';
+const express = require('express');
+const path = require('path');
+const routes = require('./routes');
+
+const Database = require('./index');
 
 class App {
   constructor() {
@@ -26,4 +28,4 @@ class App {
   }
 }
 
-export default new App().server;
+module.exports = new App().server;

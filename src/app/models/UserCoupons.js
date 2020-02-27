@@ -1,6 +1,6 @@
-import Sequelize, { Model } from 'sequelize';
+const Sequelize = require ('sequelize');
 
-class UserCoupons extends Model {
+class UserCoupons extends Sequelize.Model {
   static init(sequelize){
     super.init({
       id: {
@@ -27,4 +27,4 @@ class UserCoupons extends Model {
   }
 }
 
-export default UserCoupons;
+module.exports = UserCoupons;

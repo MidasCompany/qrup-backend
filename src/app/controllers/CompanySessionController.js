@@ -1,7 +1,7 @@
-import jwt from 'jsonwebtoken'; 
-import Employee from '../models/Employee';
-import authConfig from '../../config/auth';
-import * as Yup from 'yup';
+const jwt = require ('jsonwebtoken'); 
+const Employee = require ('../models/Employee');
+const authConfig = require ('../../config/auth');
+const Yup = require ('yup');
 
 class CompanySessionController {
   async store(req, res) {
@@ -47,4 +47,4 @@ class CompanySessionController {
   }
 }
 
-export default new CompanySessionController();
+module.exports = new CompanySessionController();

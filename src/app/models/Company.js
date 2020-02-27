@@ -1,7 +1,7 @@
-import Sequelize, { Model } from 'sequelize';
-import bcrypt from "bcryptjs";
+const Sequelize = require ('sequelize');
+const bcrypt = require ("bcryptjs");
 
-class Company extends Model {
+class Company extends Sequelize.Model {
   static init(sequelize){
     super.init({
       id: {
@@ -38,4 +38,4 @@ class Company extends Model {
   }
 }
 
-export default Company;
+module.exports = Company;

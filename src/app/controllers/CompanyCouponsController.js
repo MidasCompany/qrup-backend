@@ -1,6 +1,6 @@
-import CompanyCoupons from '../models/CompanyCoupons';
-import Company from '../models/Company';
-import * as Yup from 'yup';
+const CompanyCoupons = require ('../models/CompanyCoupons');
+const Company = require ('../models/Company');
+const Yup = require ('yup');
 
 class CompanyCouponsController {
   async store(req, res){
@@ -41,4 +41,4 @@ class CompanyCouponsController {
   }
 }
 
-export default new CompanyCouponsController();
+module.exports = new CompanyCouponsController();

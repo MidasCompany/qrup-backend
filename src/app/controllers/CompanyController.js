@@ -1,6 +1,6 @@
-import Company from '../models/Company';
-import * as Yup from 'yup';
-import File from '../models/File';
+const Company = require ('../models/Company');
+const Yup = require ('yup');
+const File = require ('../models/File');
 
 class CompanyController {
   async store(req, res){
@@ -75,4 +75,4 @@ class CompanyController {
   } 
 }
 
-export default new CompanyController();
+module.exports = new CompanyController();

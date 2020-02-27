@@ -1,15 +1,15 @@
-import Sequelize from "sequelize";
-import mongoose from 'mongoose';
+const Sequelize = require ("sequelize");
+const mongoose = require ('mongoose');
 
-import User from './app/models/User';
-import Company from './app/models/Company';
-import Cup from './app/models/Cup';
-import Employee from './app/models/Employee';
-import UserCoupons from './app/models/UserCoupons';
-import CompanyCoupons from './app/models/CompanyCoupons';
-import File from './app/models/File';
+const User = require ('./app/models/User');
+const Company = require ('./app/models/Company');
+const Cup = require ('./app/models/Cup');
+const Employee = require ('./app/models/Employee');
+const UserCoupons = require ('./app/models/UserCoupons');
+const CompanyCoupons = require ('./app/models/CompanyCoupons');
+const File = require ('./app/models/File');
 
-import databaseConfig from "./config/database";
+const databaseConfig = require ("./config/database");
 
 const models = [User, Company, Cup, Employee, UserCoupons, CompanyCoupons, File];
 
@@ -20,7 +20,7 @@ class Database {
   }
 
   init() {
-    this.connection = new Sequelize(databaseConfig);
+    this.connection = new Sequelize(databaseConfig.development);
     models.map(model => model.init(this.connection));
     models.map(model => model.associate && model.associate(this.connection.models));
   }
@@ -33,4 +33,4 @@ class Database {
   //}
 }
 
-export default new Database();
+module.exports = new Database();

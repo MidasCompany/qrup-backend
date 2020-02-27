@@ -1,6 +1,6 @@
-import User from '../models/User';
-import * as Yup from 'yup';
-import File from '../models/File';
+const User = require ('../models/User');
+const Yup = require('yup');
+const File = require('../models/File');
 
 class UserController {
   async store(req, res){
@@ -155,4 +155,4 @@ class UserController {
   }
 }
 
-export default new UserController();
+module.exports = new UserController();

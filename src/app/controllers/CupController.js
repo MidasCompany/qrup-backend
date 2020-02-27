@@ -1,6 +1,6 @@
-import Cup from '../models/Cup';
-import User from '../models/User';
-import File from '../models/File';
+const Cup = require ('../models/Cup');
+const User = require ('../models/User');
+const File = require ('../models/File');
 
 class CupController {
   async store(req, res){
@@ -42,4 +42,4 @@ class CupController {
   }
 }
 
-export default new CupController();
+module.exports = new CupController();

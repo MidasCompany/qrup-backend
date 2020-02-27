@@ -1,4 +1,4 @@
-import File from '../models/File';
+const File = require ('../models/File');
 //import User from '../models/User';
 
 class FileController {
@@ -26,4 +26,4 @@ class FileController {
     return res.json(files);
   }
 }
-export default new FileController();
+module.exports = new FileController();

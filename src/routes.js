@@ -1,18 +1,18 @@
-import { Router } from "express";
-import multer from "multer";
-import multerConfig from "../src/config/multer";
+const { Router } = require ("express");
+const multer = require ("multer");
+const multerConfig = require ("../src/config/multer");
 
-import UserController from './app/controllers/UserController';
-import SessionController from './app/controllers/SessionController';
-import CompanyController from './app/controllers/CompanyController';
-import CupController from './app/controllers/CupController';
-import EmployeeController from './app/controllers/EmployeeController';
-import CompanyCouponsController from './app/controllers/CompanyCouponsController';
-import UserCouponsController from './app/controllers/UserCouponsController';
-import FileController from './app/controllers/FileController';
-import CompanySessionController from './app/controllers/CompanySessionController';
+const UserController = require('./app/controllers/UserController');
+const SessionController = require('./app/controllers/SessionController');
+const CompanyController = require('./app/controllers/CompanyController');
+const CupController = require('./app/controllers/CupController');
+const EmployeeController = require('./app/controllers/EmployeeController');
+const CompanyCouponsController = require('./app/controllers/CompanyCouponsController');
+const UserCouponsController = require('./app/controllers/UserCouponsController');
+const FileController = require('./app/controllers/FileController');
+const CompanySessionController = require('./app/controllers/CompanySessionController');
 
-import authMiddleware from "./app/middlewares/auth";
+const authMiddleware = require ("./app/middlewares/auth");
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -42,4 +42,4 @@ routes.put("/employees", authMiddleware, EmployeeController.update);
 
 routes.delete("/employees", authMiddleware, EmployeeController.delete);
 
-export default routes;
+module.exports = routes;

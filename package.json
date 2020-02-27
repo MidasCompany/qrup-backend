@@ -4,11 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "clean": "rm -rf build && mkdir build",
-    "build-babel": "babel -d ./build ./src -s",
-    "build": "yarn clean && yarn build-babel",
-    "start": "yarn build && node ./build/index.js"
+    "migrate": "sequelize db:migrate&&yarn db_init",
+    "migrate_undo": "sequelize db:migrate:undo:all",
+    "db_init": "yarn db_init_undo&&sequelize db:seed:all",
+    "db_init_undo": "sequelize db:seed:undo:all",
+    "start": "yarn migrate&&node src/server.js",
+    "dev": "nodemon src/server.js --ignore test",
+    "dev_reset": "yarn migrate_undo&&yarn dev"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -23,15 +25,12 @@
     "pg": "^7.12.1",
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.21.2",
+    "sequelize-cli": "^5.5.1",
+    "sqlite3": "^4.1.1",
     "validar-cpf": "^2.1.2",
-    "@babel/core": "^7.8.6",
-    "@babel/node": "^7.8.4",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/preset-env": "^7.8.6",
     "yup": "^0.28.0"
   },
   "devDependencies": {
-    "sequelize-cli": "^5.5.1",
-    "sucrase": "^3.10.1"
+    "dotenv": "^8.2.0"
   }
 }
