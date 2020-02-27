@@ -15,7 +15,7 @@ class App {
     this.middlewares();
     this.routes();
     this.server.use('/', (req, res) => {
-      res.send(process.env)
+      res.json({status: 'ok'})
     })
     this.Database;
   }
