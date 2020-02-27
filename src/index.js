@@ -8,10 +8,12 @@ const Employee = require ('./app/models/Employee');
 const UserCoupons = require ('./app/models/UserCoupons');
 const CompanyCoupons = require ('./app/models/CompanyCoupons');
 const File = require ('./app/models/File');
+const CompanyPoints = require ('./app/models/CompanyPoints');
+const UserPoints = require ('./app/models/UserPoints');
 
 const databaseConfig = require ("./config/database");
 
-const models = [User, Company, Cup, Employee, UserCoupons, CompanyCoupons, File];
+const models = [User, Company, Cup, Employee, UserCoupons, CompanyCoupons, CompanyPoints, UserPoints, File];
 
 class Database {
   constructor() {
@@ -21,7 +23,7 @@ class Database {
 
   init() {
     this.connection = new Sequelize(databaseConfig.development);
-    models.map(model => model.init(this.connection));
+    models.map(model => model.init(this.connection)); 
     models.map(model => model.associate && model.associate(this.connection.models));
   }
 
