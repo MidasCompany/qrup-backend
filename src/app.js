@@ -1,9 +1,9 @@
-import express from 'express';
-import path from 'path';
-import morgan from 'morgan';
-import routes from './routes';
-import 'dotenv/config';
-import './index';
+const express = require('express');
+const path = require('path');
+const morgan = require('morgan');
+const routes = require('./routes');
+require('dotenv/config');
+require('./index');
 
 class App {
 	constructor() {

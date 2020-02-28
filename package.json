@@ -7,7 +7,7 @@
 		"clean": "rm -rf build && mkdir build",
 		"build-babel": "babel -d ./build ./src -s",
 		"build": "yarn clean && yarn build-babel",
-		"start": "yarn build && yarn migrate && node ./build/server.js",
+		"start": "yarn build && yarn migrate && node ./src/server.js",
 		"migrate": "sequelize db:migrate && yarn db_init",
 		"migrate_undo": "sequelize db:migrate:undo:all",
 		"db_init": "yarn db_init_undo && sequelize db:seed:all",
