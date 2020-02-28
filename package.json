@@ -1,36 +1,48 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "scripts": {
-    "migrate": "sequelize db:migrate&&yarn db_init",
-    "migrate_undo": "sequelize db:migrate:undo:all",
-    "db_init": "yarn db_init_undo&&sequelize db:seed:all",
-    "db_init_undo": "sequelize db:seed:undo:all",
-    "start": "yarn migrate&&node src/server.js",
-    "dev": "nodemon src/server.js --ignore test",
-    "dev_reset": "yarn migrate_undo&&yarn dev"
-  },
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "cpf-cnpj-validator": "^0.1.0",
-    "crypto": "^1.0.1",
-    "date-fns": "^2.0.0-beta.5",
-    "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.8.13",
-    "multer": "^1.4.2",
-    "nodemon": "^2.0.2",
-    "pg": "^7.12.1",
-    "pg-hstore": "^2.3.3",
-    "sequelize": "^5.21.2",
-    "sequelize-cli": "^5.5.1",
-    "sqlite3": "^4.1.1",
-    "validar-cpf": "^2.1.2",
-    "yup": "^0.28.0"
-  },
-  "devDependencies": {
-    "dotenv": "^8.2.0"
-  }
+	"name": "backend",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "MIT",
+	"scripts": {
+		"clean": "rm -rf build && mkdir build",
+		"build-babel": "babel -d ./build ./src -s",
+		"build": "yarn clean && yarn build-babel",
+		"start": "yarn build && yarn migrate && node ./build/index.js",
+		"migrate": "sequelize db:migrate && yarn db_init",
+		"migrate_undo": "sequelize db:migrate:undo:all",
+		"db_init": "yarn db_init_undo && sequelize db:seed:all",
+		"db_init_undo": "sequelize db:seed:undo:all",
+		"dev": "nodemon --exec node -r dotenv/config --exec babel-node src/server.js --ignore test",
+		"dev_reset": "yarn migrate_undo && yarn dev"
+	},
+	"dependencies": {
+		"bcryptjs": "^2.4.3",
+		"cpf-cnpj-validator": "^0.1.0",
+		"crypto": "^1.0.1",
+		"date-fns": "^2.0.0-beta.5",
+		"dotenv": "^8.2.0",
+		"express": "^4.17.1",
+		"jsonwebtoken": "^8.5.1",
+		"mongoose": "^5.8.13",
+		"morgan": "^1.9.1",
+		"multer": "^1.4.2",
+		"pg": "^7.12.1",
+		"pg-hstore": "^2.3.3",
+		"sequelize": "^5.21.2",
+		"sequelize-cli": "^5.5.1",
+		"sqlite3": "^4.1.1",
+		"validar-cpf": "^2.1.2",
+		"yup": "^0.28.0"
+	},
+	"devDependencies": {
+		"@babel/cli": "^7.8.4",
+		"@babel/core": "^7.8.6",
+		"@babel/node": "^7.8.4",
+		"@babel/plugin-proposal-class-properties": "^7.8.3",
+		"@babel/preset-env": "^7.8.6",
+		"eslint": "^6.8.0",
+		"eslint-config-airbnb-base": "^14.0.0",
+		"eslint-plugin-import": "^2.20.1",
+		"nodemon": "^2.0.2"
+	}
 }
