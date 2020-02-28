@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import morgan from 'morgan';
 import routes from './routes';
+import 'dotenv/config';
 import './index';
 
 class App {
