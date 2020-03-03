@@ -1,10 +1,8 @@
 module.exports = {
   production: {
-    dialect: 'postgres', 
-    host : '192.168.99.100',
-    username : 'postgres',
-    password : 'docker',
-    database : 'qrup',
+    database: 'test',
+    storage: 'test.sqlite',
+    dialect: 'sqlite',
     define : {
       timestamps : true,
       underscored : true,
@@ -12,9 +10,12 @@ module.exports = {
     },
   },
   development: {
-    database: 'test',
-    storage: 'test.sqlite',
-    dialect: 'sqlite',
+    
+    dialect: 'postgres', 
+    host : '192.168.99.100',
+    username : 'postgres',
+    password : 'docker',
+    database : 'qrup',
     dialectOptions: {
       dateString: true,
       typeCast: true

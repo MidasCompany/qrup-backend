@@ -13,7 +13,7 @@ const UserPoints = require ('./app/models/UserPoints');
 
 const databaseConfig = require ("./config/database");
 
-const models = [User, Company, Cup, Employee, UserCoupons, CompanyCoupons, CompanyPoints, UserPoints, File];
+const models = [User, Company, Cup, Employee, UserCoupons, CompanyCoupons, CompanyPoints, UserPoints, File ];
 
 class Database {
   constructor() {

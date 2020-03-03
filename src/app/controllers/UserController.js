@@ -1,6 +1,7 @@
 const User = require ('../models/User');
 const Yup = require('yup');
 const File = require('../models/File');
+const UserPoints = require ('../models/UserPoints');
 
 class UserController {
   async store(req, res){
@@ -73,6 +74,7 @@ class UserController {
     }
     
     const { id, name, email, cpf, birth, contact, points } = await User.create(req.body);
+    await UserPoints.create({user_id: id, total: 0, created_at: new Date(), updated_at: new Date()});
 
     return res.json({
       id, 
