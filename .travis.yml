@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-	- "12.13"
+  - "12.13"
 branches:
   only: 
     - master
@@ -10,8 +10,8 @@ script:
   - "yarn test"
     
 deploy:
-	provider: heroku
-	api_key:
+  provider: heroku
+  api_key:
     secure: "cc350e3c-a5a0-4547-9199-f7876e2f7ad2"
   app: qrup-app
   on:
