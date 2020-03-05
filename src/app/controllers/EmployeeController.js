@@ -5,10 +5,16 @@ const File = require('../models/File');
 
 class EmployeeController {
 	async store(req, res) {
-		const employeeExists = await Employee.findOne({ where: { cpf: req.body.cpf } });
+		const employeeExists = await Employee.findOne({
+			where: {
+				cpf: req.body.cpf
+			}
+		});
 
 		if (employeeExists) {
-			return res.status(400).json({ error: 'Employee already exists' });
+			return res.status(400).json({
+				error: 'Employee already exists'
+			});
 		}
 		//------------------------------------------------------------------------------------------------------------
 		const schemaName = Yup.object().shape({
@@ -16,7 +22,9 @@ class EmployeeController {
 		});
 
 		if (!(await schemaName.isValid(req.body))) {
-			return res.status(400).json({ error: 'Name validation fails' });
+			return res.status(400).json({
+				error: 'Name validation fails'
+			});
 		}
 		//------------------------------------------------------------------------------------------------------------
 		function checkCPF(str) {
@@ -29,11 +37,15 @@ class EmployeeController {
 		});
 
 		if (!(await schemaCpf.isValid(req.body))) {
-			return res.status(400).json({ error: 'CPF validation fails' });
+			return res.status(400).json({
+				error: 'CPF validation fails'
+			});
 		}
 
 		if (!(await checkCPF(req.body.cpf))) {
-			return res.status(400).json({ error: 'Invalid CPF' });
+			return res.status(400).json({
+				error: 'Invalid CPF'
+			});
 		}
 
 		//------------------------------------------------------------------------------------------------------------
@@ -42,12 +54,21 @@ class EmployeeController {
 		});
 
 		if (!(await schemaCompany.isValid(req.body))) {
-			return res.status(400).json({ error: 'Company ID validation fails' });
+			return res.status(400).json({
+				error: 'Company ID validation fails'
+			});
 		}
 		// ------------------------------------------------------------------------------------------------------------
 
 		const {
-			id, name, cpf, password, owner, manager, employee, company_id,
+			id,
+			name,
+			cpf,
+			password,
+			owner,
+			manager,
+			employee,
+			company_id,
 		} = await Employee.create(req.body);
 
 		return res.json({
@@ -64,11 +85,16 @@ class EmployeeController {
 
 	async update(req, res) {
 		const checkUserNotEmployee = await Employee.findOne({
-			where: { id: req.employee_id, employee: false },
+			where: {
+				id: req.employee_id,
+				employee: false
+			},
 		});
 
 		if (!checkUserNotEmployee) {
-			return res.status(401).json({ error: 'Only managers and owners can update employees' });
+			return res.status(401).json({
+				error: 'Only managers and owners can update employees'
+			});
 		}
 		//= ========================================================================================
 		const schema = Yup.object().shape({
@@ -80,26 +106,46 @@ class EmployeeController {
 		});
 
 		if (!(await schema.isValid(req.body))) {
-			return res.status(400).json({ error: 'Validation fails' });
+			return res.status(400).json({
+				error: 'Validation fails'
+			});
 		}
-		const { cpf, oldPassword } = req.body;
+		const {
+			cpf,
+			oldPassword
+		} = req.body;
 
 		const employee = await Employee.findByPk(req.employee_id);
 
 		if (cpf && cpf != employee.cpf) {
-			const employeeExists = await Employee.findOne({ where: { cpf } });
+			const employeeExists = await Employee.findOne({
+				where: {
+					cpf
+				}
+			});
 
 			if (!employeeExists) {
-				return res.status(400).json({ error: 'Employee doenst exists' });
+				return res.status(400).json({
+					error: 'Employee doenst exists'
+				});
 			}
 		}
 
 		if (oldPassword && !(await employee.checkPassword(oldPassword))) {
-			return res.status(401).json({ error: 'Password does not match' });
+			return res.status(401).json({
+				error: 'Password does not match'
+			});
 		}
 
 		const {
-			id, name, password, owner, manager, employee: func, company_id, avatar_id,
+			id,
+			name,
+			password,
+			owner,
+			manager,
+			employee: func,
+			company_id,
+			avatar_id,
 		} = await employee.update(req.body);
 
 		return res.json({
@@ -117,17 +163,21 @@ class EmployeeController {
 
 	async index(req, res) {
 		const checkUserNotEmployee = await Employee.findOne({
-			where: { id: req.employee_id, employee: false },
+			where: {
+				id: req.employee_id,
+				employee: false
+			},
 		});
 
 		if (!checkUserNotEmployee) {
-			return res.status(401).json({ error: 'Only managers and owners can list employees' });
+			return res.status(401).json({
+				error: 'Only managers and owners can list employees'
+			});
 		}
 		const employees = await Employee.findAll({
 			// where:
 			attributes: ['id', 'name', 'cpf', 'password', 'owner', 'manager', 'employee'],
-			include: [
-				{
+			include: [{
 					model: Company,
 					attributes: ['name', 'address', 'contact', 'cnpj'],
 				},
@@ -140,7 +190,9 @@ class EmployeeController {
 		});
 
 		if (employees < 1) {
-			return res.status(400).json({ error: 'No employees registered' });
+			return res.status(400).json({
+				error: 'No employees registered'
+			});
 		}
 
 		return res.json(employees);
@@ -148,21 +200,30 @@ class EmployeeController {
 
 	async delete(req, res) {
 		const checkUserOwner = await Employee.findOne({
-			where: { id: req.employee_id, owner: false },
+			where: {
+				id: req.employee_id,
+				owner: false
+			},
 		});
 
 		if (!checkUserOwner) {
-			return res.status(401).json({ error: 'Only owners can delete employees' });
+			return res.status(401).json({
+				error: 'Only owners can delete employees'
+			});
 		}
 
-		const { id } = req.body;
+		const {
+			id
+		} = req.body;
 
 		await Employee.destroy({
 			where: {
 				id,
 			},
 		});
-		return res.json({ message: 'Successfully deleted' });
+		return res.json({
+			message: 'Successfully deleted'
+		});
 	}
 }
 
