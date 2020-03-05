@@ -4,9 +4,6 @@
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
-		"clean": "rm -rf build && mkdir build",
-		"build-babel": "babel -d ./build ./src -s",
-		"build": "yarn clean && yarn build-babel",
 		"start": "yarn migrate && node ./src/server.js",
 		"migrate": "sequelize db:migrate && yarn db_init",
 		"migrate_undo": "sequelize db:migrate:undo:all",
