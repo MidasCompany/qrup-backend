@@ -4,7 +4,11 @@ node_js:
 branches:
   only: 
     - master
-  
+
+script:
+  - "yarn lint"
+  - "yarn test"
+    
 deploy:
 	provider: heroku
 	api_key:
