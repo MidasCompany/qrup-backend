@@ -4,9 +4,16 @@ node_js:
 branches:
   only: 
     - master
-  
+
+script:
+  - "yarn lint"
+  - "yarn test"
+    
 deploy:
 	provider: heroku
 	api_key:
-		secure: "cc350e3c-a5a0-4547-9199-f7876e2f7ad2"
+    secure: "cc350e3c-a5a0-4547-9199-f7876e2f7ad2"
+  app: qrup-app
+  on:
+    repo: MidasCompany/qrup-backend
   

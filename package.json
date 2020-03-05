@@ -10,7 +10,8 @@
 		"db_init": "yarn db_init_undo && sequelize db:seed:all",
 		"db_init_undo": "sequelize db:seed:undo:all",
 		"dev": "nodemon --exec node -r dotenv/config --exec babel-node src/server.js --ignore test",
-		"dev_reset": "yarn migrate_undo && yarn dev"
+		"dev_reset": "yarn migrate_undo && yarn dev",
+		"lint": "eslint src/**/*.js"
 	},
 	"dependencies": {
 		"bcryptjs": "^2.4.3",
@@ -18,6 +19,7 @@
 		"crypto": "^1.0.1",
 		"date-fns": "^2.0.0-beta.5",
 		"dotenv": "^8.2.0",
+		"eslint": "^6.8.0",
 		"express": "^4.17.1",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^5.8.13",
@@ -38,7 +40,6 @@
 		"@babel/plugin-proposal-class-properties": "^7.8.3",
 		"@babel/plugin-transform-runtime": "^7.8.3",
 		"@babel/preset-env": "^7.8.6",
-		"eslint": "^6.8.0",
 		"eslint-config-airbnb-base": "^14.0.0",
 		"eslint-plugin-import": "^2.20.1",
 		"nodemon": "^2.0.2"
