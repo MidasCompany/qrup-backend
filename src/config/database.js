@@ -18,13 +18,13 @@ module.exports = {
 		database: 'qrup',
 		dialectOptions: {
 			dateString: true,
-			typeCast: true
+			typeCast: true,
 		},
 		define: {
 			timestamps: true,
 			underscored: true,
 			underscoredALL: true,
 		},
-		logging: false
-	}
+		logging: false,
+	},
 };

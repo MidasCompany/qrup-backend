@@ -1,4 +1,4 @@
-const Yup = require('yup');
+//const Yup = require('yup');
 const UserCoupons = require('../models/UserCoupons');
 const User = require('../models/User');
 const CompanyCoupons = require('../models/CompanyCoupons');

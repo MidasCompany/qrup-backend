@@ -7,13 +7,13 @@ class EmployeeController {
 	async store(req, res) {
 		const employeeExists = await Employee.findOne({
 			where: {
-				cpf: req.body.cpf
-			}
+				cpf: req.body.cpf,
+			},
 		});
 
 		if (employeeExists) {
 			return res.status(400).json({
-				error: 'Employee already exists'
+				error: 'Employee already exists',
 			});
 		}
 		//------------------------------------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ class EmployeeController {
 
 		if (!(await schemaName.isValid(req.body))) {
 			return res.status(400).json({
-				error: 'Name validation fails'
+				error: 'Name validation fails',
 			});
 		}
 		//------------------------------------------------------------------------------------------------------------
@@ -38,13 +38,13 @@ class EmployeeController {
 
 		if (!(await schemaCpf.isValid(req.body))) {
 			return res.status(400).json({
-				error: 'CPF validation fails'
+				error: 'CPF validation fails',
 			});
 		}
 
 		if (!(await checkCPF(req.body.cpf))) {
 			return res.status(400).json({
-				error: 'Invalid CPF'
+				error: 'Invalid CPF',
 			});
 		}
 
@@ -55,7 +55,7 @@ class EmployeeController {
 
 		if (!(await schemaCompany.isValid(req.body))) {
 			return res.status(400).json({
-				error: 'Company ID validation fails'
+				error: 'Company ID validation fails',
 			});
 		}
 		// ------------------------------------------------------------------------------------------------------------
@@ -87,13 +87,13 @@ class EmployeeController {
 		const checkUserNotEmployee = await Employee.findOne({
 			where: {
 				id: req.employee_id,
-				employee: false
+				employee: false,
 			},
 		});
 
 		if (!checkUserNotEmployee) {
 			return res.status(401).json({
-				error: 'Only managers and owners can update employees'
+				error: 'Only managers and owners can update employees',
 			});
 		}
 		//= ========================================================================================
@@ -107,12 +107,12 @@ class EmployeeController {
 
 		if (!(await schema.isValid(req.body))) {
 			return res.status(400).json({
-				error: 'Validation fails'
+				error: 'Validation fails',
 			});
 		}
 		const {
 			cpf,
-			oldPassword
+			oldPassword,
 		} = req.body;
 
 		const employee = await Employee.findByPk(req.employee_id);
@@ -120,20 +120,20 @@ class EmployeeController {
 		if (cpf && cpf != employee.cpf) {
 			const employeeExists = await Employee.findOne({
 				where: {
-					cpf
-				}
+					cpf,
+				},
 			});
 
 			if (!employeeExists) {
 				return res.status(400).json({
-					error: 'Employee doenst exists'
+					error: 'Employee doenst exists',
 				});
 			}
 		}
 
 		if (oldPassword && !(await employee.checkPassword(oldPassword))) {
 			return res.status(401).json({
-				error: 'Password does not match'
+				error: 'Password does not match',
 			});
 		}
 
@@ -165,33 +165,33 @@ class EmployeeController {
 		const checkUserNotEmployee = await Employee.findOne({
 			where: {
 				id: req.employee_id,
-				employee: false
+				employee: false,
 			},
 		});
 
 		if (!checkUserNotEmployee) {
 			return res.status(401).json({
-				error: 'Only managers and owners can list employees'
+				error: 'Only managers and owners can list employees',
 			});
 		}
 		const employees = await Employee.findAll({
 			// where:
 			attributes: ['id', 'name', 'cpf', 'password', 'owner', 'manager', 'employee'],
 			include: [{
-					model: Company,
-					attributes: ['name', 'address', 'contact', 'cnpj'],
-				},
-				{
-					model: File,
-					attributes: ['name', 'path', 'url'],
-					as: 'avatar',
-				},
+				model: Company,
+				attributes: ['name', 'address', 'contact', 'cnpj'],
+			},
+			{
+				model: File,
+				attributes: ['name', 'path', 'url'],
+				as: 'avatar',
+			},
 			],
 		});
 
 		if (employees < 1) {
 			return res.status(400).json({
-				error: 'No employees registered'
+				error: 'No employees registered',
 			});
 		}
 
@@ -202,18 +202,18 @@ class EmployeeController {
 		const checkUserOwner = await Employee.findOne({
 			where: {
 				id: req.employee_id,
-				owner: false
+				owner: false,
 			},
 		});
 
 		if (!checkUserOwner) {
 			return res.status(401).json({
-				error: 'Only owners can delete employees'
+				error: 'Only owners can delete employees',
 			});
 		}
 
 		const {
-			id
+			id,
 		} = req.body;
 
 		await Employee.destroy({
@@ -222,7 +222,7 @@ class EmployeeController {
 			},
 		});
 		return res.json({
-			message: 'Successfully deleted'
+			message: 'Successfully deleted',
 		});
 	}
 }

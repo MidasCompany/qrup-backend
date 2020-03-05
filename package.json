@@ -9,7 +9,7 @@
 		"migrate_undo": "sequelize db:migrate:undo:all",
 		"db_init": "yarn db_init_undo && sequelize db:seed:all",
 		"db_init_undo": "sequelize db:seed:undo:all",
-		"dev": "nodemon --exec node -r dotenv/config --exec babel-node src/server.js --ignore test",
+		"dev": "nodemon --exec node -r dotenv/config src/server.js --ignore test",
 		"dev_reset": "yarn migrate_undo && yarn dev",
 		"lint": "eslint src/**/*.js"
 	},

@@ -11,24 +11,23 @@ const CompanyCouponsController = require('./app/controllers/CompanyCouponsContro
 const UserCouponsController = require('./app/controllers/UserCouponsController');
 const FileController = require('./app/controllers/FileController');
 const CompanySessionController = require('./app/controllers/CompanySessionController');
-const AddPointsController = require ('./app/controllers/AddPointsController');
-const SubPointsController = require ('./app/controllers/SubPointsController');
-
+const AddPointsController = require('./app/controllers/AddPointsController');
+const SubPointsController = require('./app/controllers/SubPointsController');
 const authMiddleware = require('./app/middlewares/auth');
 
 const routes = new Router();
 const upload = multer(multerConfig);
 
-routes.post("/companies", CompanyController.store);
-routes.post("/users", UserController.store);
-routes.post("/cups", authMiddleware, CupController.store);
-routes.post("/employees", EmployeeController.store);
-routes.post("/company-coupons", CompanyCouponsController.store);
-routes.post("/user-coupons", UserCouponsController.store);
-routes.post("/sessions", SessionController.store);
-routes.post("/companysessions", CompanySessionController.store);
-routes.post("/reads", authMiddleware, AddPointsController.store);
-routes.post("/takes", authMiddleware, SubPointsController.store);
+routes.post('/companies', CompanyController.store);
+routes.post('/users', UserController.store);
+routes.post('/cups', authMiddleware, CupController.store);
+routes.post('/employees', EmployeeController.store);
+routes.post('/company-coupons', CompanyCouponsController.store);
+routes.post('/user-coupons', UserCouponsController.store);
+routes.post('/sessions', SessionController.store);
+routes.post('/companysessions', CompanySessionController.store);
+routes.post('/reads', authMiddleware, AddPointsController.store);
+routes.post('/takes', authMiddleware, SubPointsController.store);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
