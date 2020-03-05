@@ -8,13 +8,15 @@ class CupController {
 			id, description, type, qr,
 		} = await Cup.create(req.body);
 
-		return res.json({
-			id,
-			description,
-			type,
-			qr,
-		});
-	}
+    const CupExists = await Cup.findOne({
+      where: {qr: req.body.qr}
+    });
+
+    if(CupExists){
+      return res.status(400).json({error: 'Cup already resgistered'})
+    }
+
+    const { id, description, type, qr } = await Cup.create(req.body);
 
 	async index(req, res) {
 		const cups = await Cup.findAll({
