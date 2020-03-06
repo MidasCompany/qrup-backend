@@ -26,8 +26,8 @@ routes.post('/company-coupons', CompanyCouponsController.store);
 routes.post('/user-coupons', UserCouponsController.store);
 routes.post('/sessions', SessionController.store);
 routes.post('/companysessions', CompanySessionController.store);
-routes.post('/reads', authMiddleware, AddPointsController.store);
-routes.post('/takes', authMiddleware, SubPointsController.store);
+routes.post('/users/:user_id/reads', authMiddleware, AddPointsController.store);
+routes.post('/users/:user_id/takes', authMiddleware, SubPointsController.store);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
