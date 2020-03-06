@@ -2,9 +2,18 @@ const Yup = require('yup');
 const Employee = require('../models/Employee');
 const Company = require('../models/Company');
 const File = require('../models/File');
+const validarCpf = require('validar-cpf');
 
 class EmployeeController {
 	async store(req, res) {
+		const { company_id } = req.params;
+
+		const company = await Company.findByPk(company_id);
+
+		if(!company){
+			return res.status(400).json('Company not found');
+		}
+
 		const employeeExists = await Employee.findOne({
 			where: {
 				cpf: req.body.cpf,
@@ -27,10 +36,6 @@ class EmployeeController {
 			});
 		}
 		//------------------------------------------------------------------------------------------------------------
-		function checkCPF(str) {
-			const regex = /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/;
-			return regex.test(String(str).toLowerCase());
-		}
 
 		const schemaCpf = Yup.object().shape({
 			cpf: Yup.string().required(),
@@ -41,23 +46,13 @@ class EmployeeController {
 				error: 'CPF validation fails',
 			});
 		}
+		const validcpf = validarCpf(req.body.cpf);
 
-		if (!(await checkCPF(req.body.cpf))) {
-			return res.status(400).json({
-				error: 'Invalid CPF',
-			});
+		if(!validcpf){
+		return res.status(400).json('CPF invalid');
 		}
 
 		//------------------------------------------------------------------------------------------------------------
-		const schemaCompany = Yup.object().shape({
-			company_id: Yup.string().required(),
-		});
-
-		if (!(await schemaCompany.isValid(req.body))) {
-			return res.status(400).json({
-				error: 'Company ID validation fails',
-			});
-		}
 		// ------------------------------------------------------------------------------------------------------------
 
 		const {
@@ -67,8 +62,7 @@ class EmployeeController {
 			password,
 			owner,
 			manager,
-			employee,
-			company_id,
+			employee
 		} = await Employee.create(req.body);
 
 		return res.json({
@@ -79,7 +73,7 @@ class EmployeeController {
 			owner,
 			manager,
 			employee,
-			company_id,
+			company_id
 		});
 	}
 
@@ -144,7 +138,6 @@ class EmployeeController {
 			owner,
 			manager,
 			employee: func,
-			company_id,
 			avatar_id,
 		} = await employee.update(req.body);
 

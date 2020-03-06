@@ -4,6 +4,14 @@ const UserPoints = require('../models/UserPoints');
 
 class SubPointsController {
 	async store(req, res) {
+		const { user_id } = req.params;
+
+		const user = await User.findByPk(user_id);
+
+		if(!user){
+			return res.status(400).json({ error: 'User not found' })
+		}
+		
 		const qr_cup = await Cup.findOne({
 			where: { qr: req.body.qr },
 		});

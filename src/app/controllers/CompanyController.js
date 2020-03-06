@@ -1,14 +1,16 @@
 const Yup = require('yup');
 const Company = require('../models/Company');
 const File = require('../models/File');
+const validarCpf = require('validar-cpf');
+
 
 class CompanyController {
 	async store(req, res) {
-		this.schemaName = Yup.object().shape({
+		const schemaName = Yup.object().shape({
 			name: Yup.string().required(),
 		});
 
-		if (!(await this.schemaName.isValid(req.body))) {
+		if (!(await schemaName.isValid(req.body))) {
 			return res.status(400).json({ error: 'Name validation fails' });
 		}
 		const schemaAddress = Yup.object().shape({
@@ -19,11 +21,6 @@ class CompanyController {
 			return res.status(400).json({ error: 'Address validation fails' });
 		}
 
-		function checkCNPJ(str) {
-			const regex = /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/;
-			return regex.test(String(str).toLowerCase());
-		}
-
 		const schemaCnpj = Yup.object().shape({
 			cnpj: Yup.string().required(),
 		});
@@ -31,9 +28,11 @@ class CompanyController {
 		if (!(await schemaCnpj.isValid(req.body))) {
 			return res.status(400).json({ error: 'CNPj validation fails' });
 		}
+		
+		const validcnpj = validarCpf(req.body.cnpj);
 
-		if (!(await checkCNPJ(req.body.cnpj))) {
-			return res.status(400).json({ error: 'Invalid CNPj' });
+		if(!validcnpj){
+		return res.status(400).json({ error: 'Cnpj invalid'});
 		}
 
 		const companyExists = await Company.findOne({ where: { cnpj: req.body.cnpj } });
@@ -57,8 +56,8 @@ class CompanyController {
 	}
 
 	async index(req, res) {
-		this.companies = await Company.findAll({
-			attributes: ['name', 'address', 'contact', 'cnpj', 'representative'],
+		const companies = await Company.findAll({
+			attributes: ['id', 'name', 'address', 'contact', 'cnpj', 'representative'],
 			include: {
 				model: File,
 				attributes: ['name', 'path', 'url'],
@@ -66,11 +65,11 @@ class CompanyController {
 			},
 		});
 
-		if (this.companies < 1) {
+		if (companies < 1) {
 			return res.status(400).json({ error: 'No companies registered' });
 		}
 
-		return res.json(this.companies);
+		return res.json(companies);
 	}
 }
 

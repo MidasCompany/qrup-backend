@@ -16,10 +16,6 @@ class Employee extends Sequelize.Model {
 			employee: Sequelize.BOOLEAN,
 			password_hash: Sequelize.STRING,
 			password: Sequelize.VIRTUAL,
-			company_id: {
-				type: Sequelize.UUID,
-				allowNull: false,
-			},
 		},
 		{
 			sequelize,

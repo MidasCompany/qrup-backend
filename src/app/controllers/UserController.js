@@ -1,6 +1,7 @@
 const Yup = require('yup');
 const User = require('../models/User');
 const File = require('../models/File');
+const validarCpf = require('validar-cpf');
 const UserPoints = require('../models/UserPoints');
 
 class UserController {
@@ -19,49 +20,25 @@ class UserController {
 		if (!(await schemaEmail.isValid(req.body))) {
 			return res.status(400).json({ error: 'Email validation fails' });
 		}
-		// CHECK DE CPF
+		/*// CHECK DE CPF
 		function checkCPF(str) {
-			/* const cpf = strCPF.replace(/[.]|[-]|[ ]/g, '');
-
-    let sum = 0;
-    let rest = 0;
-
-    if (cpf === '00000000000') return false;
-
-    for (let i = 0; i <= 9; i += 1)
-      sum += Number(cpf.substring(i - 1, i)) * (11 - 1);
-
-    rest = (sum * 10) % 11;
-
-    if (rest === 10 || rest === 11) rest = 0;
-    if (rest !== Number(cpf.substring(9, 10))) return false;
-
-    sum = 0;
-    for (let i = 0; i <= 10; i += 1)
-      sum += Number(cpf.substring(i - 1, i)) * (12 - i);
-
-    rest = (sum * 10) % 11;
-    if (rest === 10 || rest === 11) rest = 0;
-    if (rest !== Number(cpf.substring(10, 11))) return false;
-
-    return true;
-    */
 			const regex = /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/;
 			return regex.test(String(str).toLowerCase());
-		}
+		}*/
 		// FIM DO CHECK DE CPF
 		const schemaCpf = Yup.object().shape({
 			cpf: Yup.string().required(),
-		});
+    });
 
 		if (!(await schemaCpf.isValid(req.body))) {
 			return res.status(400).json({ error: 'CPF validation fails' });
-		}
+    }
+    
+    const validcpf = validarCpf(req.body.cpf);
 
-		if (!(await checkCPF(req.body.cpf))) {
-			// if (checkCPF(req.body.cpf) == false){
-			return res.status(400).json({ error: 'Invalid CPF' });
-		}
+    if(!validcpf){
+      return res.status(400).json('CPF invalid');
+    }
 
 		const userExists = await User.findOne({ where: { email: req.body.email } });
 
