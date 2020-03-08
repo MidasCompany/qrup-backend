@@ -6,7 +6,7 @@ branches:
     - master
 
 script:
-  - "yarn lint"
+  #- "yarn lint"
   - "yarn test"
     
 deploy:
