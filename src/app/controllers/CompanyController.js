@@ -1,8 +1,7 @@
 const Yup = require('yup');
 const Company = require('../models/Company');
 const File = require('../models/File');
-const validarCpf = require('validar-cpf');
-
+const { validate } = require('cnpj');
 
 class CompanyController {
 	async store(req, res) {
@@ -28,8 +27,8 @@ class CompanyController {
 		if (!(await schemaCnpj.isValid(req.body))) {
 			return res.status(400).json({ error: 'CNPj validation fails' });
 		}
-		
-		const validcnpj = validarCpf(req.body.cnpj);
+
+		const validcnpj = validate(req.body.cnpj);
 
 		if(!validcnpj){
 		return res.status(400).json({ error: 'Cnpj invalid'});
