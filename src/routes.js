@@ -19,7 +19,7 @@ const routes = new Router();
 const upload = multer(multerConfig);
 
 routes.post('/companies', CompanyController.store);
-routes.post('/users', UserController.store);
+routes.post('/users/:user_id', authMiddleware, UserController.store);
 routes.post('/users/:user_id/cups', authMiddleware, CupController.store);
 routes.post('/companies/:company_id/employees', EmployeeController.store);
 routes.post('/company-coupons', CompanyCouponsController.store);

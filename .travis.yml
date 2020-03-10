@@ -2,18 +2,17 @@ language: node_js
 node_js:
   - "12.13"
 branches:
-  only: 
+  only:
     - master
 
 script:
   #- "yarn lint"
   - "yarn test"
-    
+
 deploy:
   provider: heroku
   api_key:
-    secure: "cc350e3c-a5a0-4547-9199-f7876e2f7ad2"
+    secure: "BBRwr_piyxQvXufbt8ARMg"
   app: qrup-app
   on:
     repo: MidasCompany/qrup-backend
-  
