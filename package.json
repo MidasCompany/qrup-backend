@@ -11,7 +11,8 @@
 		"db_init_undo": "sequelize db:seed:undo:all",
 		"dev": "yarn migrate && nodemon --exec node -r dotenv/config src/server.js --ignore test",
 		"dev_reset": "yarn migrate_undo && yarn dev",
-		"lint": "eslint src/**/*.js"
+		"lint": "eslint src/**/*.js",
+		"test": "set NODE_ENV=test && jest"
 	},
 	"dependencies": {
 		"bcryptjs": "^2.4.3",
@@ -32,6 +33,7 @@
 		"yup": "^0.28.0"
 	},
 	"devDependencies": {
+		"jest": "^25.1.0",
 		"nodemon": "^2.0.2"
 	}
 }
