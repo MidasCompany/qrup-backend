@@ -2,18 +2,27 @@ const Yup = require('yup');
 const Employee = require('../models/Employee');
 const Company = require('../models/Company');
 const File = require('../models/File');
+const validarCpf = require('validar-cpf');
 
 class EmployeeController {
 	async store(req, res) {
+		const { company_id } = req.params;
+
+		const company = await Company.findByPk(company_id);
+
+		if(!company){
+			return res.status(400).json('Company not found');
+		}
+
 		const employeeExists = await Employee.findOne({
 			where: {
-				cpf: req.body.cpf
-			}
+				cpf: req.body.cpf,
+			},
 		});
 
 		if (employeeExists) {
 			return res.status(400).json({
-				error: 'Employee already exists'
+				error: 'Employee already exists',
 			});
 		}
 		//------------------------------------------------------------------------------------------------------------
@@ -23,14 +32,10 @@ class EmployeeController {
 
 		if (!(await schemaName.isValid(req.body))) {
 			return res.status(400).json({
-				error: 'Name validation fails'
+				error: 'Name validation fails',
 			});
 		}
 		//------------------------------------------------------------------------------------------------------------
-		function checkCPF(str) {
-			const regex = /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/;
-			return regex.test(String(str).toLowerCase());
-		}
 
 		const schemaCpf = Yup.object().shape({
 			cpf: Yup.string().required(),
@@ -38,26 +43,16 @@ class EmployeeController {
 
 		if (!(await schemaCpf.isValid(req.body))) {
 			return res.status(400).json({
-				error: 'CPF validation fails'
+				error: 'CPF validation fails',
 			});
 		}
+		const validcpf = validarCpf(req.body.cpf);
 
-		if (!(await checkCPF(req.body.cpf))) {
-			return res.status(400).json({
-				error: 'Invalid CPF'
-			});
+		if(!validcpf){
+		return res.status(400).json('CPF invalid');
 		}
 
 		//------------------------------------------------------------------------------------------------------------
-		const schemaCompany = Yup.object().shape({
-			company_id: Yup.string().required(),
-		});
-
-		if (!(await schemaCompany.isValid(req.body))) {
-			return res.status(400).json({
-				error: 'Company ID validation fails'
-			});
-		}
 		// ------------------------------------------------------------------------------------------------------------
 
 		const {
@@ -67,8 +62,7 @@ class EmployeeController {
 			password,
 			owner,
 			manager,
-			employee,
-			company_id,
+			employee
 		} = await Employee.create(req.body);
 
 		return res.json({
@@ -79,7 +73,7 @@ class EmployeeController {
 			owner,
 			manager,
 			employee,
-			company_id,
+			company_id
 		});
 	}
 
@@ -87,13 +81,13 @@ class EmployeeController {
 		const checkUserNotEmployee = await Employee.findOne({
 			where: {
 				id: req.employee_id,
-				employee: false
+				employee: false,
 			},
 		});
 
 		if (!checkUserNotEmployee) {
 			return res.status(401).json({
-				error: 'Only managers and owners can update employees'
+				error: 'Only managers and owners can update employees',
 			});
 		}
 		//= ========================================================================================
@@ -107,12 +101,12 @@ class EmployeeController {
 
 		if (!(await schema.isValid(req.body))) {
 			return res.status(400).json({
-				error: 'Validation fails'
+				error: 'Validation fails',
 			});
 		}
 		const {
 			cpf,
-			oldPassword
+			oldPassword,
 		} = req.body;
 
 		const employee = await Employee.findByPk(req.employee_id);
@@ -120,20 +114,20 @@ class EmployeeController {
 		if (cpf && cpf != employee.cpf) {
 			const employeeExists = await Employee.findOne({
 				where: {
-					cpf
-				}
+					cpf,
+				},
 			});
 
 			if (!employeeExists) {
 				return res.status(400).json({
-					error: 'Employee doenst exists'
+					error: 'Employee doenst exists',
 				});
 			}
 		}
 
 		if (oldPassword && !(await employee.checkPassword(oldPassword))) {
 			return res.status(401).json({
-				error: 'Password does not match'
+				error: 'Password does not match',
 			});
 		}
 
@@ -144,7 +138,6 @@ class EmployeeController {
 			owner,
 			manager,
 			employee: func,
-			company_id,
 			avatar_id,
 		} = await employee.update(req.body);
 
@@ -165,33 +158,33 @@ class EmployeeController {
 		const checkUserNotEmployee = await Employee.findOne({
 			where: {
 				id: req.employee_id,
-				employee: false
+				employee: false,
 			},
 		});
 
 		if (!checkUserNotEmployee) {
 			return res.status(401).json({
-				error: 'Only managers and owners can list employees'
+				error: 'Only managers and owners can list employees',
 			});
 		}
 		const employees = await Employee.findAll({
 			// where:
 			attributes: ['id', 'name', 'cpf', 'password', 'owner', 'manager', 'employee'],
 			include: [{
-					model: Company,
-					attributes: ['name', 'address', 'contact', 'cnpj'],
-				},
-				{
-					model: File,
-					attributes: ['name', 'path', 'url'],
-					as: 'avatar',
-				},
+				model: Company,
+				attributes: ['name', 'address', 'contact', 'cnpj'],
+			},
+			{
+				model: File,
+				attributes: ['name', 'path', 'url'],
+				as: 'avatar',
+			},
 			],
 		});
 
 		if (employees < 1) {
 			return res.status(400).json({
-				error: 'No employees registered'
+				error: 'No employees registered',
 			});
 		}
 
@@ -202,18 +195,18 @@ class EmployeeController {
 		const checkUserOwner = await Employee.findOne({
 			where: {
 				id: req.employee_id,
-				owner: false
+				owner: false,
 			},
 		});
 
 		if (!checkUserOwner) {
 			return res.status(401).json({
-				error: 'Only owners can delete employees'
+				error: 'Only owners can delete employees',
 			});
 		}
 
 		const {
-			id
+			id,
 		} = req.body;
 
 		await Employee.destroy({
@@ -222,7 +215,7 @@ class EmployeeController {
 			},
 		});
 		return res.json({
-			message: 'Successfully deleted'
+			message: 'Successfully deleted',
 		});
 	}
 }

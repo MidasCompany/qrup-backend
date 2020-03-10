@@ -4,18 +4,35 @@ const File = require('../models/File');
 
 class CupController {
 	async store(req, res) {
-		
+		const { user_id } = req.params;
 
-		const CupExists = await Cup.findOne({
-			where: {qr: req.body.qr}
-		});
+		const user = await User.findByPk(user_id);
 
-		if(CupExists){
-		return res.status(400).json({error: 'Cup already resgistered'})
+		if(!user){
+			return res.status(400).json({ error: 'User not found' })
 		}
 
-		const { id, description, type, qr } = await Cup.create(req.body);
-	
+		const CupExists = await Cup.findOne({
+			where: { qr: req.body.qr },
+		});
+
+		if (CupExists) {
+			return res.status(400).json({ error: 'Cup already resgistered' });
+		}
+
+		req.body.user_id = req.params.user_id;
+		
+		const {
+			id, description, type, qr
+		} = await Cup.create(req.body);
+
+		return res.json({
+			id,
+			description,
+			type,
+			qr,
+			user_id
+		});
 	}
 
 	async index(req, res) {

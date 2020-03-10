@@ -1,50 +1,57 @@
-const Cup = require ('../models/Cup');
-const User = require ('../models/User');
-const UserPoints = require ('../models/UserPoints');
+const Cup = require('../models/Cup');
+const User = require('../models/User');
+const UserPoints = require('../models/UserPoints');
 
 class SubPointsController {
-  async store(req, res){
-    const qr_cup = await Cup.findOne({
-      where: {qr: req.body.qr},
-    });
-    if (!qr_cup) {
-      return res.status(400).json({error: 'Cup not registered'});
-    }
+	async store(req, res) {
+		const { user_id } = req.params;
 
-    const points = await UserPoints.findOne({
-      where: {user_id: qr_cup.user_id},
-    });
-    //VALORES PARA CUPONS DISPONÍVEIS: 5, 10 e 15
-     
-    try{
-      if(points.total < 5){
-        return res.status(400).json({error: 'You dont have enough points'});
-      }
-      await points.update({total: points.total - 5})
-      
-    }catch(err){
-      return res.status(400).json({error: 'Cant update total'});
-    }
+		const user = await User.findByPk(user_id);
 
-    return res.json({
-      employee_id: req.employee_id,
-      qr_cup,
-      points
-    });
-  }
+		if(!user){
+			return res.status(400).json({ error: 'User not found' })
+		}
+		
+		const qr_cup = await Cup.findOne({
+			where: { qr: req.body.qr },
+		});
+		if (!qr_cup) {
+			return res.status(400).json({ error: 'Cup not registered' });
+		}
 
-  async index(req, res){
-    const points = await UserPoints.findAll({
-      order: ['total'],
-      include:[
-        {
-          model: User,
-          attributes: ['name', 'email', 'contact', 'cpf'],
-        }
-      ],
-    });
-    return res.json(points);
-  }
+		const points = await UserPoints.findOne({
+			where: { user_id: qr_cup.user_id },
+		});
+		// VALORES PARA CUPONS DISPONÍVEIS: 5, 10 e 15
+
+		try {
+			if (points.total < 5) {
+				return res.status(400).json({ error: 'You dont have enough points' });
+			}
+			await points.update({ total: points.total - 5 });
+		} catch (err) {
+			return res.status(400).json({ error: 'Cant update total' });
+		}
+
+		return res.json({
+			employee_id: req.employee_id,
+			qr_cup,
+			points,
+		});
+	}
+
+	async index(req, res) {
+		const points = await UserPoints.findAll({
+			order: ['total'],
+			include: [
+				{
+					model: User,
+					attributes: ['name', 'email', 'contact', 'cpf'],
+				},
+			],
+		});
+		return res.json(points);
+	}
 }
 
 module.exports = new SubPointsController();

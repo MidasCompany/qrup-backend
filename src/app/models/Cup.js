@@ -13,6 +13,7 @@ class Cup extends Sequelize.Model {
 			qr: Sequelize.STRING,
 			user_id: {
 				type: Sequelize.UUID,
+				defaultValue: Sequelize.UUIDV4,
 				allowNull: false,
 			},
 		},

@@ -1382,6 +1382,11 @@ cls-bluebird@^2.1.0:
     is-bluebird "^1.0.2"
     shimmer "^1.1.0"
 
+cnpj@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/cnpj/-/cnpj-3.0.0.tgz#3d6225a9bed4b8b62404cdc9b7fab3a7c54e83e4"
+  integrity sha512-kpi0/5UyHLqIHVAp9wzhALt2IWNSV3KrqWqSLyo42aAoZrElnueN9QAhojb1gF4R+VOXHhywKRsLtjz9dIOfxw==
+
 code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"

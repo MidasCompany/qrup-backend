@@ -8,10 +8,6 @@ class UserPoints extends Sequelize.Model {
 				defaultValue: Sequelize.UUIDV4,
 				primaryKey: true,
 			},
-			user_id: {
-				type: Sequelize.UUID,
-				allowNull: false,
-			},
 			total: Sequelize.INTEGER,
 		},
 		{
