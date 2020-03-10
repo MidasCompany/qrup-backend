@@ -13,7 +13,7 @@ class AddPointsController {
 		}
 
 		const isEmployee = await Employee.findOne({
-			where: { id: req.employee_id },
+			where: { id: req.params.employee_id },
 		});
 
 		if (!isEmployee) {
