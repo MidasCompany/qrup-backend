@@ -110,9 +110,8 @@ class UserController {
 	}
 
 	async index(req, res) {
-		const users = await User.findAll({
-			// where: { points: 0 },
-			// where: { points: 1 },
+		const users = await User.findOne({
+			where: { id: req.params.user_id },
 			attributes: ['id', 'name', 'email', 'points'],
 			include: [
 				{
