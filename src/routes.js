@@ -19,7 +19,7 @@ const routes = new Router();
 const upload = multer(multerConfig);
 
 routes.post('/companies', CompanyController.store);
-routes.post('/users/:user_id', authMiddleware, UserController.store);
+routes.post('/users', UserController.store);
 routes.post('/users/:user_id/cups', authMiddleware, CupController.store);
 routes.post('/companies/:company_id/employees', EmployeeController.store);
 routes.post('/company-coupons', CompanyCouponsController.store);
@@ -31,7 +31,7 @@ routes.post('/employees/:employee_id/takes', authMiddleware, SubPointsController
 
 routes.post('/files', upload.single('file'), FileController.store);
 
-routes.get('/users', UserController.index);
+routes.get('/users/:user_id', authMiddleware, UserController.index);
 routes.get('/companies/:company_id/employees', authMiddleware, EmployeeController.index);
 routes.get('/companies', CompanyController.index);
 routes.get('/company-coupons', CompanyCouponsController.index);
