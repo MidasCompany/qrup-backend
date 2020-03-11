@@ -1,18 +1,15 @@
 language: node_js
 node_js:
-  - "12.13"
+- '12.13'
 branches:
   only:
-    - master
-
+  - master
 script:
-  #- "yarn lint"
-  - "yarn test"
-
+- yarn test
 deploy:
   provider: heroku
   api_key:
-    secure: "BBRwr_piyxQvXufbt8ARMg"
+    secure: juntN13TKbdrtYko+jDqG9qlcH/MwUZwCkQktYxCFEGJ34IOvN/niUOAROySU+mFonT/F5qGK+vPCnyzt8cj1mRrKy5cymytqyG/nA5z9g0lyTmwXrrvzgLlfgwNdcAKX/y9S1tgnMA09TzlAnT27/qIRCMl8xELlK/S/6dDsY8bYIHLZy03ACPBNnPLUquieCxj6ERl9iJJkeGD8res6La2XN2ARtfphesExbpD7b8WmQibtEDvc0N6C/BuVlHlyRnosG9Lh0PoHutz5svGeYgiZQF44/Uyy9S3Gf/JIUoZ0BznEfSX5RBefJeQ+qyyUzcyJtnsPgsHWTN0r6RPclfNFjUMkq3BPKvmS42xygWhObuZyzuaHxQVnOn7hxppDJbMZyKyk45d9eh+kRqApNRZymVsLvDcluq/sY8E+piD4nHUHSXkanf94pLR4NcMV0UnK7Cepz7GmXDbBJIxOQj9Ef4mVHzBX+2w/CDNKyDjULPOQz/q42rM7zgxQR5V+y0vHQFKVAhFoXUqRzFf0CwUvywAwPwRnTaYtTCuDS0yUIpTOulTaOhkXPBKqUJWd5/zRggY8xIXNjZAzEm8cvMhHdjH1zunxZZzF+vbE+2spa7Q7/3Iz9W9vd8u/bX4JZUml2E/AIy29rb/nia9Ve9Yqv7z4jBsDNf/7DInz3g=
   app: qrup-app
   on:
     repo: MidasCompany/qrup-backend
