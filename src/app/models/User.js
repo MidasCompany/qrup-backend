@@ -17,7 +17,6 @@ class User extends Sequelize.Model {
 				contact: Sequelize.STRING,
 				cpf: Sequelize.STRING,
 				birth: Sequelize.DATE,
-				points: Sequelize.INTEGER,
 			},
 			{
 				sequelize,

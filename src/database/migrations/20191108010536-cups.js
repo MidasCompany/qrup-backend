@@ -28,7 +28,12 @@ module.exports = {
 			type: Sequelize.DATE,
 			allowNull: false,
 		},
+		deleted_at: {
+			type: Sequelize.DATE
+		}
 
+	},{
+		paranoid: true,
 	}),
 
 	down: (queryInterface, Sequelize) => queryInterface.dropTable('cups'),

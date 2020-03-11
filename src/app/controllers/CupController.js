@@ -42,7 +42,7 @@ class CupController {
 			include: [
 				{
 					model: User,
-					attributes: ['name', 'email', 'contact', 'cpf', 'points'],
+					attributes: ['name', 'email', 'contact', 'cpf'],
 					include: [
 						{
 							model: File,
@@ -59,6 +59,22 @@ class CupController {
 		}
 
 		return res.json(cups);
+	}
+
+	async delete(req, res) {
+		
+		const {
+			qr,
+		} = req.body;
+
+		await Cup.destroy({
+			where: {
+				qr,
+			},
+		});
+		return res.json({
+			message: 'Successfully deleted',
+		});
 	}
 }
 

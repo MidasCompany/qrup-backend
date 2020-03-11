@@ -33,7 +33,6 @@ class Company extends Sequelize.Model {
 	static associate(models) {
 		this.hasMany(models.Employee, { foreignKey: 'id' });
 		this.hasMany(models.CompanyCoupons, { foreignKey: 'id' });
-		this.hasMany(models.CompanyPoints, { foreignKey: 'id' });
 		this.belongsTo(models.File, { foreignKey: 'logo_id', as: 'logo' });
 	}
 }

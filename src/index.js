@@ -6,13 +6,12 @@ const Employee = require('./app/models/Employee');
 const UserCoupons = require('./app/models/UserCoupons');
 const CompanyCoupons = require('./app/models/CompanyCoupons');
 const File = require('./app/models/File');
-const CompanyPoints = require('./app/models/CompanyPoints');
 const UserPoints = require('./app/models/UserPoints');
 
 const databaseConfig = require('./config/database');
 
 const models = [User, Company, Cup, Employee, UserCoupons, CompanyCoupons,
-	CompanyPoints, UserPoints, File];
+	UserPoints, File];
 
 class Database {
 	constructor() {
