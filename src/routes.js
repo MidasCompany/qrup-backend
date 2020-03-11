@@ -10,7 +10,6 @@ const EmployeeController = require('./app/controllers/EmployeeController');
 const CompanyCouponsController = require('./app/controllers/CompanyCouponsController');
 const UserCouponsController = require('./app/controllers/UserCouponsController');
 const FileController = require('./app/controllers/FileController');
-const CompanySessionController = require('./app/controllers/CompanySessionController');
 const AddPointsController = require('./app/controllers/AddPointsController');
 const SubPointsController = require('./app/controllers/SubPointsController');
 const authMiddleware = require('./app/middlewares/auth');
@@ -25,7 +24,6 @@ routes.post('/companies/:company_id/employees', EmployeeController.store);
 routes.post('/company-coupons', CompanyCouponsController.store);
 routes.post('/user-coupons', UserCouponsController.store);
 routes.post('/sessions', SessionController.store);
-routes.post('/companysessions', CompanySessionController.store);
 routes.post('/employees/:employee_id/reads', authMiddleware, AddPointsController.store);
 routes.post('/employees/:employee_id/takes', authMiddleware, SubPointsController.store);
 

@@ -32,15 +32,6 @@ module.exports = {
 			type: Sequelize.DATE,
 			allowNull: false,
 		},
-		points: {
-			type: Sequelize.INTEGER,
-			defaultValue: 0,
-		},
-		active: {
-			type: Sequelize.BOOLEAN,
-			// allowNull: false,
-		},
-
 		created_at: {
 			type: Sequelize.DATE,
 			allowNull: false,
