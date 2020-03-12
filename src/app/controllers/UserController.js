@@ -20,12 +20,6 @@ class UserController {
 		if (!(await schemaEmail.isValid(req.body))) {
 			return res.status(400).json({ error: 'Email validation fails' });
 		}
-		/*// CHECK DE CPF
-		function checkCPF(str) {
-			const regex = /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/;
-			return regex.test(String(str).toLowerCase());
-		}*/
-		// FIM DO CHECK DE CPF
 		const schemaCpf = Yup.object().shape({
 			cpf: Yup.string().required(),
     });
@@ -112,7 +106,7 @@ class UserController {
 	async index(req, res) {
 		const users = await User.findOne({
 			where: { id: req.params.user_id },
-			attributes: ['id', 'name', 'email', 'points'],
+			attributes: ['id', 'name', 'email'],
 			include: [
 				{
 					model: File,

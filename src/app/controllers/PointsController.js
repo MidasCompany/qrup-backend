@@ -1,13 +1,13 @@
 const Cup = require('../models/Cup');
 const User = require('../models/User');
+const Employee = require('../models/Employee');
 const UserPoints = require('../models/UserPoints');
 
-class SubPointsController {
+class PointsController {
 	async store(req, res) {
 		const qr_cup = await Cup.findOne({
 			where: { qr: req.body.qr },
 		});
-
 		if (!qr_cup) {
 			return res.status(400).json({ error: 'Cup not registered' });
 		}
@@ -23,17 +23,45 @@ class SubPointsController {
 		const points = await UserPoints.findOne({
 			where: { user_id: qr_cup.user_id },
 		});
-		// VALORES PARA CUPONS DISPONÍVEIS: 5, 10 e 15
-		try {
-			await points.update({ total: points.total - 5 });
-		} catch (err) {
-			return res.status(400).json({ error: 'Cant update total' });
+		async function AddPoints(){
+			try {
+				await points.update({ total: points.total + 1 }); //Adiciona 1 ponto por leitura
+			} catch (err) {
+				return res.status(400).json({ error: 'Cant add to total' });
+			}
+		}
+		async function SubPoints(){
+			const TotalPoints = points.total;
+
+			if (TotalPoints < 5){
+				return res.status(400).json({error: 'You dont have enough points'});
+			} 
+			else{
+				try {
+					await points.update({ total: points.total - 5 }); // Retira 5 pontos por leitura
+				} catch (err) {
+					return res.status(400).json({ error: 'Cant take from total' });
+				}
+			}
+		}
+
+		const { type } = req.body;
+
+		if (type === 'read'){
+			AddPoints();
+		}
+		else if(type === 'take'){
+			SubPoints();
+		}
+		else{
+			return res.status(400).json({error: 'Type must be defined'});
 		}
 
 		return res.json({
 			employee_id: req.employee_id,
 			qr_cup,
 			points,
+			type
 		});
 	}
 
@@ -51,4 +79,4 @@ class SubPointsController {
 	}
 }
 
-module.exports = new SubPointsController();
+module.exports = new PointsController();

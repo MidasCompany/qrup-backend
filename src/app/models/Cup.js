@@ -11,6 +11,7 @@ class Cup extends Sequelize.Model {
 			description: Sequelize.STRING,
 			type: Sequelize.STRING,
 			qr: Sequelize.STRING,
+			active: Sequelize.BOOLEAN,
 			user_id: {
 				type: Sequelize.UUID,
 				defaultValue: Sequelize.UUIDV4,

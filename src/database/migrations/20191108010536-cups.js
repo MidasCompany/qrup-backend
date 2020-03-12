@@ -20,6 +20,10 @@ module.exports = {
 		qr: {
 			type: Sequelize.STRING,
 		},
+		active: {
+			type: Sequelize.BOOLEAN,
+			defaultValue: true,
+		},
 		created_at: {
 			type: Sequelize.DATE,
 			allowNull: false,
@@ -28,7 +32,12 @@ module.exports = {
 			type: Sequelize.DATE,
 			allowNull: false,
 		},
+		deleted_at: {
+			type: Sequelize.DATE
+		}
 
+	},{
+		paranoid: true,
 	}),
 
 	down: (queryInterface, Sequelize) => queryInterface.dropTable('cups'),

@@ -37,12 +37,15 @@ class CupController {
 
 	async index(req, res) {
 		const cups = await Cup.findAll({
+			where: {
+				active: true,
+			},
 			order: ['type'],
 			attributes: ['description', 'type', 'qr'],
 			include: [
 				{
 					model: User,
-					attributes: ['name', 'email', 'contact', 'cpf', 'points'],
+					attributes: ['name', 'email', 'contact', 'cpf'],
 					include: [
 						{
 							model: File,
@@ -59,6 +62,23 @@ class CupController {
 		}
 
 		return res.json(cups);
+	}
+
+	async delete(req, res) {
+		const qr_cup = await Cup.findOne({
+			where: {qr: req.body.qr}, 
+		});
+		if (!qr_cup) {
+			return res.status(400).json({ error: 'Cup not registered' });
+		}
+		const cup = await Cup.findOne({
+			where: {active: true}
+		})
+		await cup.update({active: false});
+
+		return res.json({
+			message: 'Successfully deleted',
+		});
 	}
 }
 
