@@ -1,6 +1,6 @@
 //const Yup = require('yup');
 const UserCoupons = require('../models/UserCoupons');
-const User = require('../models/User');
+const Company = require('../models/Company');
 const CompanyCoupons = require('../models/CompanyCoupons');
 
 class UserCouponsController {
@@ -15,20 +15,12 @@ class UserCouponsController {
 	}
 
 	async index(req, res) {
-		const coupons = await UserCoupons.findAll({
-			attributes: ['id'],
-			include: [
-				{
-					model: User,
-					attributes: ['name', 'email', 'contact', 'cpf', 'points'],
-					as: 'user',
-				},
-				{
-					model: CompanyCoupons,
-					attributes: ['id', 'company_id', 'points'],
-					as: 'coupom',
-				},
-			],
+		const coupons = await CompanyCoupons.findAll({
+			attributes: ['id', 'name', 'description', 'points'],
+			include: [{
+				model: Company,
+				attributes: ['name', 'address', 'contact', 'cnpj'],
+			}],
 		});
 
 		if (coupons < 1) {

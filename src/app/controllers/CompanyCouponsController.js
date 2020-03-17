@@ -5,31 +5,35 @@ const Company = require('../models/Company');
 class CompanyCouponsController {
 	async store(req, res) {
 		//-------------------------------------------------------------------------------------------
-		const schemaCompany = Yup.object().shape({
-			company_id: Yup.string().required(),
-		});
+		const { company_id } = req.params;
 
-		if (!(await schemaCompany.isValid(req.body))) {
-			return res.status(400).json({ error: 'CompanyID is required' });
+		const company = await Company.findByPk(company_id);
+
+		if(!company){
+			return res.status(400).json('Company not found');
 		}
-		const { id, company_id, points } = await CompanyCoupons.create(req.body);
+
+		req.body.company_id = req.params.company_id;
+
+		const { id, name, description, points } = await CompanyCoupons.create(req.body);
 
 		return res.json({
 			id,
-			company_id,
+			name,
+			description,
 			points,
+			company_id
 		});
 	}
 
 	async index(req, res) {
 		const coupons = await CompanyCoupons.findAll({
-			attributes: ['id', 'company_id', 'points'],
-			include: [
-				{
-					model: Company,
-					attributes: ['name', 'address', 'contact', 'representative'],
-				},
-			],
+			where: { company_id: req.params.company_id },
+			attributes: ['id', 'name', 'description', 'points'],
+			include: [{
+				model: Company,
+				attributes: ['name', 'address', 'contact', 'cnpj'],
+			}],
 		});
 
 		if (coupons < 1) {

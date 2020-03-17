@@ -38,6 +38,7 @@ class CupController {
 	async index(req, res) {
 		const cups = await Cup.findAll({
 			where: {
+				user_id: req.params.user_id,
 				active: true,
 			},
 			order: ['type'],
