@@ -8,7 +8,8 @@ class CompanyCoupons extends Sequelize.Model {
 				defaultValue: Sequelize.UUIDV4,
 				primaryKey: true,
 			},
-			company_id: Sequelize.UUID,
+			name: Sequelize.STRING,
+			description: Sequelize.STRING,
 			points: Sequelize.INTEGER,
 		},
 		{
