@@ -2,6 +2,7 @@ const Cup = require('../models/Cup');
 const User = require('../models/User');
 const Employee = require('../models/Employee');
 const UserPoints = require('../models/UserPoints');
+const CompanyCoupons = require('../models/CompanyCoupons');
 
 class PointsController {
 	async store(req, res) {
@@ -23,6 +24,7 @@ class PointsController {
 		const points = await UserPoints.findOne({
 			where: { user_id: qr_cup.user_id },
 		});
+
 		async function AddPoints(){
 			try {
 				await points.update({ total: points.total + 1 }); //Adiciona 1 ponto por leitura
@@ -32,13 +34,14 @@ class PointsController {
 		}
 		async function SubPoints(){
 			const TotalPoints = points.total;
+			//const value = CompanyCoupons.findByPk()
 
-			if (TotalPoints < 5){
+			if (TotalPoints < CompanyCoupons.points){
 				return res.status(400).json({error: 'You dont have enough points'});
 			} 
 			else{
 				try {
-					await points.update({ total: points.total - 5 }); // Retira 5 pontos por leitura
+					await points.update({ total: points.total - CompanyCoupons.points }); 
 				} catch (err) {
 					return res.status(400).json({ error: 'Cant take from total' });
 				}
