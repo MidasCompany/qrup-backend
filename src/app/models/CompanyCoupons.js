@@ -10,6 +10,7 @@ class CompanyCoupons extends Sequelize.Model {
 			},
 			name: Sequelize.STRING,
 			description: Sequelize.STRING,
+			code: Sequelize.STRING,
 			points: Sequelize.INTEGER,
 		},
 		{

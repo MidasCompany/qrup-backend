@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Employee = require('../models/Employee');
 const UserPoints = require('../models/UserPoints');
 const CompanyCoupons = require('../models/CompanyCoupons');
+const Yup = require('yup');
 
 class PointsController {
 	async store(req, res) {
@@ -31,41 +32,51 @@ class PointsController {
 			} catch (err) {
 				return res.status(400).json({ error: 'Cant add to total' });
 			}
+			
+			return res.json({
+				employee_id: req.employee_id,
+				qr_cup,
+				points,
+				type
+			});
 		}
 		async function SubPoints(){
-			const TotalPoints = points.total;
+			//const TotalPoints = points.total;
 			//const value = CompanyCoupons.findByPk()
-
-			if (TotalPoints < CompanyCoupons.points){
-				return res.status(400).json({error: 'You dont have enough points'});
-			} 
-			else{
-				try {
-					await points.update({ total: points.total - CompanyCoupons.points }); 
-				} catch (err) {
-					return res.status(400).json({ error: 'Cant take from total' });
-				}
+			const schemaCoupomID = Yup.object().shape({
+				coupom_id: Yup.string().required(),
+			});
+	
+			if (!(await schemaCoupomID.isValid(req.body))) {
+				return res.status(400).json({ error: 'CoupomID validation fails' });
 			}
+
+			const CompanyData = await CompanyCoupons.findOne({
+				where: { id: req.body.coupom_id }
+			});
+
+			if (CompanyData && points) {
+				if(points.total < CompanyData.points) {
+					return res.status(400).json({ error: 'You dont have enough points' });
+				}
+				points.total = points.total - CompanyData.points;
+
+				await points.save();
+				return res.status(200).json({ ok: 'brabo' })
+			}	
 		}
 
 		const { type } = req.body;
 
 		if (type === 'read'){
-			AddPoints();
+			await AddPoints();
 		}
 		else if(type === 'take'){
-			SubPoints();
+			await SubPoints();
 		}
 		else{
 			return res.status(400).json({error: 'Type must be defined'});
 		}
-
-		return res.json({
-			employee_id: req.employee_id,
-			qr_cup,
-			points,
-			type
-		});
 	}
 
 	async index(req, res) {
