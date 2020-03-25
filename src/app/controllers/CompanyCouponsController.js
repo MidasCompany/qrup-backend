@@ -26,6 +26,32 @@ class CompanyCouponsController {
 		});
 	}
 
+	async update(req, res) {
+		const checkUserNotEmployeeAndManager = await Employee.findOne({
+			where: {
+				id: req.employee_id,
+				employee: false,
+				manager: false,
+			},
+		});
+
+		if (!checkUserNotEmployeeAndManager) {
+			return res.status(401).json({
+				error: 'Only owners can update coupons',
+			});
+		}
+
+		const { id, name, description, points } = await CompanyCoupons.update(req.body); 
+		
+		return res.json({
+			id,
+			name,
+			description,
+			points,
+			company_id
+		});
+	}
+
 	async index(req, res) {
 		const coupons = await CompanyCoupons.findAll({
 			where: { company_id: req.params.company_id },

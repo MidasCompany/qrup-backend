@@ -37,7 +37,8 @@ routes.get('/reads', PointsController.index);
 routes.get('/files', FileController.index);
 
 routes.put('/users', authMiddleware, UserController.update);
-routes.put('/employees', authMiddleware, EmployeeController.update);
+routes.put('/companies/:company_id/employees', authMiddleware, EmployeeController.update);
+routes.put('/companies/:company_id/company-coupons', authMiddleware, CompanyCouponsController.update);
 
 routes.delete('/employees', authMiddleware, EmployeeController.delete);
 routes.delete('/cups', CupController.delete);
