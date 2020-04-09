@@ -33,7 +33,7 @@ routes.get('/companies', CompanyController.index);
 routes.get('/companies/:company_id/company-coupons', CompanyCouponsController.index);
 routes.get('/users/:user_id/cups', CupController.index);
 routes.get('/user-coupons', UserCouponsController.index);
-routes.get('/reads', PointsController.index);
+routes.get('/users/:user_id/reads', PointsController.index);
 routes.get('/files', FileController.index);
 
 routes.put('/users', authMiddleware, UserController.update);
