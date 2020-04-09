@@ -50,7 +50,7 @@ class SessionController {
 		if(type === 'user') {
 			data = await User.findOne({ 
 				where: { email },
-				attributes: ['name', 'password_hash', 'email', 'contact', 'cpf'], 
+				attributes: ['id', 'name', 'password_hash', 'email', 'contact', 'cpf'], 
 			});
 	
 			if (!data) {
