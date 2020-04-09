@@ -80,7 +80,15 @@ class PointsController {
 	}
 
 	async index(req, res) {
+		const isUser = await User.findOne({
+			where: { id: req.params.user_id },
+		});
+
+		if (!isUser) {
+			return res.status(400).json({ error: 'Only users can visualize their points' });
+		}
 		const points = await UserPoints.findAll({
+			user_id: isUser.user_id,
 			order: ['total'],
 			include: [
 				{

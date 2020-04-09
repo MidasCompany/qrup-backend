@@ -37,8 +37,11 @@ class SessionController {
 		const { email, password, cpf, type } = req.body;
 
 		const user_email = await User.findOne({where: { email: req.body.email } });
+		console.log(user_email)
 		const points = await UserPoints.findOne({ 
-			user_id : user_email.user_id,
+			where: {
+			user_id : user_email.id,
+			},
 			attributes: ['total'],
 		});
 

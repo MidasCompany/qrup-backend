@@ -40,6 +40,12 @@ class UserController {
 			return res.status(400).json({ error: 'User already exists' });
 		}
 
+		const userExists2 = await User.findOne({ where: { cpf: req.body.cpf } });
+
+		if (userExists2) {
+			return res.status(400).json({ error: 'CPF is already being used' });
+		}
+
 		const {
 			id, name, email, cpf, birth, contact, points,
 		} = await User.create(req.body);
