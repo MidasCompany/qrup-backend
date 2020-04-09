@@ -31,12 +31,13 @@ class SessionController {
 			return res.status(400).json({ error: err.errors });
 		}
 
-		console.log(validation)
-
-
 		const { email, password, cpf, type } = req.body;
 
-		const user_email = await User.findOne({where: { email: req.body.email } });
+		const user_email = await User.findOne({
+			where: { 
+				email 
+			}
+		});
 		console.log(user_email)
 		const points = await UserPoints.findOne({ 
 			where: {

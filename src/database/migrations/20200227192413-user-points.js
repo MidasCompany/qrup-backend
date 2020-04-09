@@ -5,15 +5,16 @@ module.exports = {
 			defaultValue: Sequelize.UUIDV4,
 			primaryKey: true,
 		},
-		total: {
-			type: Sequelize.INTEGER,
-			allowNull: false,
-		},
 		user_id: {
 			type: Sequelize.UUID,
 			references: { model: 'users', key: 'id' },
 			onUpdate: 'CASCADE',
-			onDelete: 'SET NULL',
+			onDelete: 'CASCADE',
+		},
+		total: {
+			type: Sequelize.INTEGER,
+			allowNull: false,
+			defaultValue: 0
 		},
 		created_at: {
 			type: Sequelize.DATE,

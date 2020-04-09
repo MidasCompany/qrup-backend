@@ -15,13 +15,12 @@ module.exports = {
 			allowNull: false,
 			unique: true,
 		},
-		password_hash: {
+		password: {
 			type: Sequelize.STRING,
 			allowNull: false,
 		},
 		contact: {
 			type: Sequelize.STRING,
-			allowNull: false,
 		},
 		cpf: {
 			type: Sequelize.STRING,
