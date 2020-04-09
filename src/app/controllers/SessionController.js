@@ -4,6 +4,7 @@ const User = require('../models/User');
 const UserPoints = require('../models/UserPoints');
 const Employee = require('../models/Employee');
 const authConfig = require('../../config/auth');
+const Company = require('../models/Company');
 
 class SessionController {
 	async store(req, res) {
@@ -54,7 +55,17 @@ class SessionController {
 			}
 
 		} else if(type == 'employee') {
-			data = await Employee.findOne({ where: { cpf } });
+			data = await Employee.findOne({ 
+				where: { 
+					cpf 
+				},
+				include:[
+					{
+						model: Company,
+						as: 'company'
+					}
+				]
+			});
 
 			if (!data) {
 				return res.status(401).json({ error: 'Employee not found' });

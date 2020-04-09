@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const authConfig = require('../../config/auth');
 const User = require('../models/User');
 const Employee = require('../models/Employee');
+const Company = require('../models/Company');
 
 module.exports = async (req, res, next) => {
 	const authHeader = req.headers.authorization;
@@ -26,8 +27,14 @@ module.exports = async (req, res, next) => {
 		} else if(decoded.type === 'employee'){
 			data = await Employee.findOne({
 				where: {
-					id: decoded
-				} 
+					id: decoded.id
+				},
+				include:[
+					{
+						model: Company,
+						as: 'company'
+					}
+				]
 			});
 		}
 		
@@ -37,6 +44,7 @@ module.exports = async (req, res, next) => {
 		
 		return next();
 	} catch (err) {
+		console.log(err)
 		return res.status(401).json({ error: 'Token invalid' });
 	}
 };
