@@ -3,56 +3,46 @@ const Company = require('../models/Company');
 const Employee = require('../models/Employee');
 const File = require('../models/File');
 const { validate } = require('cnpj');
-
+const { Op } = require('sequelize');;
 class CompanyController {
 	async store(req, res) {
-		const schemaName = Yup.object().shape({
+		const schemaCreateCompany = Yup.object().shape({
 			name: Yup.string().required(),
-		});
-
-		if (!(await schemaName.isValid(req.body))) {
-			return res.status(400).json({ error: 'Name validation fails' });
-		}
-		const schemaAddress = Yup.object().shape({
 			address: Yup.string().required(),
+			cnpj: Yup.string().min(14).required(),
+			password: Yup.string().min(3).required(),
+			contact: Yup.string().default('0000000'),
+			representative: Yup.string().default('')
 		});
 
-		if (!(await schemaAddress.isValid(req.body))) {
-			return res.status(400).json({ error: 'Address validation fails' });
-		}
-
-		const schemaCnpj = Yup.object().shape({
-			cnpj: Yup.string().required(),
-		});
-
-		if (!(await schemaCnpj.isValid(req.body))) {
-			return res.status(400).json({ error: 'CNPj validation fails' });
-		}
-
-		const validcnpj = validate(req.body.cnpj);
-
-		if(!validcnpj){
-		return res.status(400).json({ error: 'Cnpj invalid'});
-		}
-
-		const companyExists = await Company.findOne({ where: { cnpj: req.body.cnpj } });
-
-		if (companyExists) {
-			return res.status(400).json({ error: 'Company already exists' });
+		let isValid = null;
+		try {
+			isValid = await schemaCreateCompany.validate(req.body, { abortEarly: false});
+		} catch (err) {
+			return res.json({
+				erro: err.errors
+			})
 		}
 
 		const {
-			id, name, address, contact, cnpj, representative,
-		} = await Company.create(req.body);
-
-		return res.json({
-			id,
-			name,
-			address,
-			contact,
 			cnpj,
-			representative,
+		} = isValid;
+
+		const validcnpj = validate(cnpj);
+
+		if(!validcnpj) return res.status(400).json({ error: 'Cnpj invalid'});
+
+		const companyExists = await Company.findOne({ 
+			where: { 
+				cnpj 
+			} 
 		});
+
+		if (companyExists) return res.status(400).json({ error: 'Company already exists' });
+
+		const company = await Company.create(isValid);
+
+		return res.json(company);
 	}
 
 	async update(req, res) {
