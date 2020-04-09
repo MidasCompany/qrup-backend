@@ -13,6 +13,8 @@ const FileController = require('./app/controllers/FileController');
 const PointsController = require('./app/controllers/PointsController');
 const authMiddleware = require('./app/middlewares/auth');
 
+const adminController = require('./app/controllers/AdminController');
+
 const routes = new Router();
 const upload = multer(multerConfig);
 
@@ -31,7 +33,7 @@ routes.get('/users/:user_id', authMiddleware, UserController.index);
 routes.get('/companies/:company_id/employees', authMiddleware, EmployeeController.index);
 routes.get('/companies', CompanyController.index);
 routes.get('/companies/:company_id/company-coupons', CompanyCouponsController.index);
-routes.get('/users/:user_id/cups', CupController.index);
+routes.get('/users/:user_id/cups', authMiddleware, CupController.index);
 routes.get('/user-coupons', UserCouponsController.index);
 routes.get('/users/:user_id/reads', PointsController.index);
 routes.get('/files', FileController.index);
@@ -42,7 +44,12 @@ routes.put('/companies/:company_id/employees', authMiddleware, EmployeeControlle
 routes.put('/companies/:company_id/company-coupons', authMiddleware, CompanyCouponsController.update);
 
 routes.delete('/employees', authMiddleware, EmployeeController.delete);
-routes.delete('/cups', CupController.delete);
+routes.delete('/users/:user_id/cups/:qr', authMiddleware, CupController.delete);
+
+
+
+//Test
+routes.get('/allCups',  adminController.allCups);
 
 
 module.exports = routes;

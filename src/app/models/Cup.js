@@ -11,16 +11,18 @@ class Cup extends Sequelize.Model {
 			description: Sequelize.STRING,
 			type: Sequelize.STRING,
 			qr: Sequelize.STRING,
-			active: Sequelize.BOOLEAN,
-			user_id: {
-				type: Sequelize.UUID,
-				defaultValue: Sequelize.UUIDV4,
-				allowNull: false,
-			},
+			enabled: Sequelize.BOOLEAN,
+			user_id: Sequelize.UUID,
 		},
 		{
+			paranoid: true,
 			sequelize,
 		});
+
+		this.beforeCreate( async (cup) => {
+			cup.qr = cup.id.split('-')[0];
+		})
+
 		return this;
 	}
 
