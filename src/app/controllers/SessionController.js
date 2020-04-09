@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Yup = require('yup');
 const User = require('../models/User');
+const UserPoints = require('../models/UserPoints');
 const Employee = require('../models/Employee');
 const authConfig = require('../../config/auth');
 
@@ -35,10 +36,19 @@ class SessionController {
 
 		const { email, password, cpf, type } = req.body;
 
+		const user_email = await User.findOne({where: { email: req.body.email } });
+		const points = await UserPoints.findOne({ 
+			user_id : user_email.user_id,
+			attributes: ['total'],
+		});
+
 		let data = null;
 
 		if(type === 'user') {
-			data = await User.findOne({ where: { email } });
+			data = await User.findOne({ 
+				where: { email },
+				attributes: ['name', 'password_hash', 'email', 'contact', 'cpf'], 
+			});
 	
 			if (!data) {
 				return res.status(401).json({ error: 'User not found' });
@@ -62,7 +72,7 @@ class SessionController {
 
 
 		return res.json({
-			[type]: data,
+			[type]: data, points,
 			token: jwt.sign({ id: data.id }, authConfig.secret, {
 				expiresIn: authConfig.expiresIn,
 			}),
