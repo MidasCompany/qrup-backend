@@ -18,7 +18,7 @@ class UserController {
 
 		let isValid = null;
 		try {
-			isValid = await schemaUserStore.validate(req.body);
+			isValid = await schemaUserStore.validate(req.body, { abortEarly: false});
 		} catch (err) {
 			return res.json({
 				erro: err.errors

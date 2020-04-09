@@ -22,41 +22,32 @@ class SessionController {
 			}),
 		});
 
-		let validation = null;
+		let isValid = null;
 
 		try {
-			validation = await schemaSession.validate(req.body, { abortEarly: false});
+			isValid = await schemaSession.validate(req.body, { abortEarly: false});
 		} catch( err ) {
-			console.log(err.errors)
 			return res.status(400).json({ error: err.errors });
 		}
 
-		const { email, password, cpf, type } = req.body;
-
-		const user_email = await User.findOne({
-			where: { 
-				email 
-			}
-		});
-		console.log(user_email)
-		const points = await UserPoints.findOne({ 
-			where: {
-			user_id : user_email.id,
-			},
-			attributes: ['total'],
-		});
+		const { email, password, cpf, type } = isValid;
 
 		let data = null;
 
 		if(type === 'user') {
 			data = await User.findOne({ 
-				where: { email },
-				attributes: ['id', 'name', 'password_hash', 'email', 'contact', 'cpf'], 
+				where: { 
+					email 
+				},
+				include:[
+					{
+						model: UserPoints,
+						as: 'points'
+					}
+				]
 			});
 	
-			if (!data) {
-				return res.status(401).json({ error: 'User not found' });
-			}
+			if (!data) return res.status(401).json({ error: 'User not found' });
 	
 			if (!(await data.checkPassword(password))) {
 				return res.status(401).json({ error: 'Password does not match' });
@@ -76,7 +67,7 @@ class SessionController {
 
 
 		return res.json({
-			[type]: data, points,
+			data,
 			token: jwt.sign({ id: data.id }, authConfig.secret, {
 				expiresIn: authConfig.expiresIn,
 			}),
