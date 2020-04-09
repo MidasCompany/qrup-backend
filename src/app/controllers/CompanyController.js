@@ -7,12 +7,14 @@ const { Op } = require('sequelize');;
 class CompanyController {
 	async store(req, res) {
 		const schemaCreateCompany = Yup.object().shape({
-			name: Yup.string().required(),
+			nameCompany: Yup.string().required(),
 			address: Yup.string().required(),
 			cnpj: Yup.string().min(14).required(),
-			password: Yup.string().min(3).required(),
+			representative: Yup.string().required(),
 			contact: Yup.string().default('0000000'),
-			representative: Yup.string().default('')
+			nameOwner: Yup.string().default(''),
+			cpf: Yup.string().min(11).required(),
+			password: Yup.string().min(3).required(),
 		});
 
 		let isValid = null;
@@ -25,7 +27,14 @@ class CompanyController {
 		}
 
 		const {
+			nameOwner,
+			nameCompany,
+			password,
 			cnpj,
+			cpf,
+			address,
+			contact,
+			representative
 		} = isValid;
 
 		const validcnpj = validate(cnpj);
@@ -40,7 +49,21 @@ class CompanyController {
 
 		if (companyExists) return res.status(400).json({ error: 'Company already exists' });
 
-		const company = await Company.create(isValid);
+		const company = await Company.create({ 
+			name: nameCompany,
+			address,
+			contact,
+			cnpj,
+			representative
+		});
+
+		await Employee.create({
+			name: nameOwner,
+			cpf,
+			password,
+			role: 1,
+			company_id: company.id
+		});
 
 		return res.json(company);
 	}

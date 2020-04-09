@@ -10,12 +10,10 @@ class Employee extends Sequelize.Model {
 				primaryKey: true,
 			},
 			name: Sequelize.STRING,
-			cpf: Sequelize.INTEGER,
-			owner: Sequelize.BOOLEAN,
-			manager: Sequelize.BOOLEAN,
-			employee: Sequelize.BOOLEAN,
-			password_hash: Sequelize.STRING,
-			password: Sequelize.VIRTUAL,
+			cpf: Sequelize.STRING,
+			role: Sequelize.INTEGER,
+			password: Sequelize.STRING,
+			company_id: Sequelize.UUID
 		},
 		{
 			sequelize,
@@ -23,7 +21,7 @@ class Employee extends Sequelize.Model {
 
 		this.addHook('beforeSave', async (employee) => {
 			if (employee.password) {
-				employee.password_hash = await bcrypt.hash(employee.password, 8);
+				employee.password = await bcrypt.hash(employee.password, 8);
 			}
 		});
 
@@ -31,7 +29,7 @@ class Employee extends Sequelize.Model {
 	}
 
 	static associate(models) {
-		this.belongsTo(models.Company, { foreignKey: 'company_id' });
+		this.belongsTo(models.Company, { foreignKey: 'company_id', as: 'company' });
 		this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
 	}
 

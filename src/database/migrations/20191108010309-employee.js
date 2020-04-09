@@ -10,10 +10,10 @@ module.exports = {
 			allowNull: false,
 		},
 		cpf: {
-			type: Sequelize.INTEGER,
+			type: Sequelize.STRING,
 			allowNull: false,
 		},
-		password_hash: {
+		password: {
 			type: Sequelize.STRING,
 			allowNull: false,
 		},
@@ -21,21 +21,15 @@ module.exports = {
 			type: Sequelize.UUID,
 			references: { model: 'companies', key: 'id' },
 			onUpdate: 'CASCADE',
-			onDelete: 'SET NULL',
+			onDelete: 'CASCADE',
 		},
-		owner: {
-			type: Sequelize.BOOLEAN,
-			defaultValue: false,
-			allowNull: false,
-		},
-		manager: {
-			type: Sequelize.BOOLEAN,
-			defaultValue: false,
-			allowNull: false,
-		},
-		employee: {
-			type: Sequelize.BOOLEAN,
-			defaultValue: false,
+		role: {
+			type: Sequelize.INTEGER,
+			defaultValue: 3,
+			references: {
+				model: 'employee_roles',
+				key: 'id'
+			},
 			allowNull: false,
 		},
 		created_at: {
