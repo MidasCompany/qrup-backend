@@ -88,7 +88,7 @@ class UserController {
 		}
 
 		const {
-			id, name, cpf, birth, contact, avatar_id, points,
+			id, name, cpf, birth, contact, avatar_id,
 		} = await user.update(req.body);
 
 		return res.json({

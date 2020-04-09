@@ -1,5 +1,6 @@
 const Yup = require('yup');
 const Company = require('../models/Company');
+const Employee = require('../models/Employee');
 const File = require('../models/File');
 const { validate } = require('cnpj');
 
@@ -52,6 +53,16 @@ class CompanyController {
 			cnpj,
 			representative,
 		});
+	}
+
+	async update(req, res) {
+		
+		const {
+		} = await Company.update(req.body, {
+			where: {id: req.params.company_id}
+		});
+
+		return res.json({ ok : "brabo"});
 	}
 
 	async index(req, res) {
