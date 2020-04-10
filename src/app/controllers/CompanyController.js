@@ -1,7 +1,6 @@
 const Yup = require('yup');
 const Company = require('../models/Company');
 const Employee = require('../models/Employee');
-const File = require('../models/File');
 const { validate } = require('cnpj');
 const { Op } = require('sequelize');;
 class CompanyController {
@@ -60,7 +59,7 @@ class CompanyController {
 		await Employee.create({
 			name: nameOwner,
 			cpf,
-			password,
+			password_temp: password,
 			role: 1,
 			company_id: company.id
 		});
@@ -81,11 +80,6 @@ class CompanyController {
 	async index(req, res) {
 		const companies = await Company.findAll({
 			attributes: ['id', 'name', 'address', 'contact', 'cnpj', 'representative'],
-			include: {
-				model: File,
-				attributes: ['name', 'path', 'url'],
-				as: 'logo',
-			},
 		});
 
 		if (companies < 1) {

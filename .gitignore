@@ -3,5 +3,11 @@ node_modules
 *.sqlite
 build
 
-/tmp/uploads/*
-!/tmp/uploads/.gitkeep
+/public/uploads/user/*
+!/public/uploads/user/default-user.jpg
+
+/public/uploads/employee/*
+!/public/uploads/employee/default-employee.jpg
+
+/public/uploads/company/*
+!/public/uploads/company/default-company.jpg

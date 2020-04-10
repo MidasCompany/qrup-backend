@@ -1,7 +1,6 @@
 const Yup = require('yup');
 const Employee = require('../models/Employee');
 const Company = require('../models/Company');
-const File = require('../models/File');
 const validarCpf = require('validar-cpf');
 
 class EmployeeController {
@@ -25,6 +24,9 @@ class EmployeeController {
 
 		const {
 			cpf,
+			name, 
+			role,
+			password
 		} = isValid;
 
 		const validcpf = validarCpf(cpf);
@@ -42,7 +44,10 @@ class EmployeeController {
 		if (employeeExists) return res.status(400).json({ error: 'Employee already exists' });
 
 		const employee = await Employee.create({
-			...req.body,
+			password_temp: password,
+			name,
+			cpf,
+			role,
 			company_id: req.employee.company.id
 		});
 
@@ -138,11 +143,6 @@ class EmployeeController {
 			include: [{
 				model: Company,
 				as: 'company'
-			},
-			{
-				model: File,
-				attributes: ['name', 'path', 'url'],
-				as: 'avatar',
 			},
 			],
 		});

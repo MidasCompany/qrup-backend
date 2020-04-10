@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"scripts": {
 		"start": "yarn migrate && node ./src/server.js",
-		"migrate": "sequelize db:migrate && yarn db_init",
+		"migrate": "sequelize db:migrate",
 		"migrate_undo": "sequelize db:migrate:undo:all",
 		"db_init": "yarn db_init_undo && sequelize db:seed:all",
 		"db_init_undo": "sequelize db:seed:undo:all",

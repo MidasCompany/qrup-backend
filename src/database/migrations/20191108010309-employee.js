@@ -32,6 +32,11 @@ module.exports = {
 			},
 			allowNull: false,
 		},
+		avatar_id: {
+			type: Sequelize.STRING,
+			allowNull: false,
+			defaultValue: '/uploads/employee/default-employee.jpg'
+		},
 		created_at: {
 			type: Sequelize.DATE,
 			allowNull: false,

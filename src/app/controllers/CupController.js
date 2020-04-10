@@ -1,6 +1,5 @@
 const Cup = require('../models/Cup');
 const User = require('../models/User');
-const File = require('../models/File');
 
 class CupController {
 	async store(req, res) {
