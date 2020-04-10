@@ -11,20 +11,12 @@ class Company extends Sequelize.Model {
 			},
 			name: Sequelize.STRING,
 			address: Sequelize.STRING,
-			password_hash: Sequelize.STRING,
-			password: Sequelize.VIRTUAL,
 			contact: Sequelize.STRING,
 			cnpj: Sequelize.STRING,
 			representative: Sequelize.STRING,
 		},
 		{
 			sequelize,
-		});
-
-		this.addHook('beforeSave', async (company) => {
-			if (company.password) {
-				company.password_hash = await bcrypt.hash(company.password, 8);
-			}
 		});
 
 		return this;

@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
-const { promisify } = require('util');
 const authConfig = require('../../config/auth');
+const User = require('../models/User');
+const Employee = require('../models/Employee');
+const Company = require('../models/Company');
 
 module.exports = async (req, res, next) => {
 	const authHeader = req.headers.authorization;
@@ -12,13 +14,37 @@ module.exports = async (req, res, next) => {
 	const [, token] = authHeader.split(' ');
 
 	try {
-		const decoded = await promisify(jwt.verify)(token, authConfig.secret);
+		const decoded = jwt.verify(token, authConfig.secret);
 		
-		req.user_id = decoded.id;
-		req.employee_id = decoded.id;
+		let data = null;
+
+		if(decoded.type === 'user'){
+			data = await User.findOne({
+				where: {
+					id: decoded.id
+				}
+			});
+		} else if(decoded.type === 'employee'){
+			data = await Employee.findOne({
+				where: {
+					id: decoded.id
+				},
+				include:[
+					{
+						model: Company,
+						as: 'company'
+					}
+				]
+			});
+		}
+		
+		if(!data) return res.json({ error: type + ' not found'})
+	
+		req[decoded.type] = data;
 		
 		return next();
 	} catch (err) {
+		console.log(err)
 		return res.status(401).json({ error: 'Token invalid' });
 	}
 };

@@ -4,61 +4,37 @@ const File = require('../models/File');
 
 class CupController {
 	async store(req, res) {
-		const { user_id } = req.params;
-
-		const user = await User.findByPk(user_id);
-
-		if(!user){
-			return res.status(400).json({ error: 'User not found' })
-		}
-
-		const CupExists = await Cup.findOne({
-			where: { qr: req.body.qr },
-		});
-
-		if (CupExists) {
-			return res.status(400).json({ error: 'Cup already resgistered' });
-		}
-		
-		req.body.user_id = req.params.user_id;
-		
-		const {
-			id, description, type, qr
-		} = await Cup.create(req.body);
-
-		return res.json({
-			id,
+		const{
 			description,
-			type,
-			qr,
-			user_id
+			qr
+		} = req.body;
+
+		const user = req.user;
+
+		const CupEx = await Cup.findOne({
+			where: { qr },
 		});
+
+		if (!CupEx) return res.status(400).json({ error: 'Cup not already resgistered' });
+
+		CupEx.user_id = user.id;
+		CupEx.description = description;
+		CupEx.enabled = true;
+
+		await CupEx.save();
+
+		return res.json(CupEx);
 	}
 
 	async index(req, res) {
 		const cups = await Cup.findAll({
 			where: {
-				user_id: req.params.user_id,
-				active: true,
+				user_id: req.user.id,
 			},
-			order: ['type'],
-			attributes: ['description', 'type', 'qr'],
-			include: [
-				{
-					model: User,
-					attributes: ['name', 'email', 'contact', 'cpf'],
-					include: [
-						{
-							model: File,
-							attributes: ['name', 'path', 'url'],
-							as: 'avatar',
-						},
-					],
-				},
-			],
+			order: ['updated_at'],
 		});
 
-		if (cups < 1) {
+		if (!cups) {
 			return res.status(400).json({ error: 'No cups registered' });
 		}
 
@@ -66,16 +42,18 @@ class CupController {
 	}
 
 	async delete(req, res) {
-		const qr_cup = await Cup.findOne({
-			where: {qr: req.body.qr}, 
+		const cup = await Cup.findOne({
+			where: {
+				qr: req.params.qr,
+				user_id: req.user.id,
+				enabled: true
+			}, 
 		});
-		if (!qr_cup) {
+		if (!cup) {
 			return res.status(400).json({ error: 'Cup not registered' });
 		}
-		const cup = await Cup.findOne({
-			where: {active: true}
-		})
-		await cup.update({active: false});
+
+		await cup.destroy();
 
 		return res.json({
 			message: 'Successfully deleted',

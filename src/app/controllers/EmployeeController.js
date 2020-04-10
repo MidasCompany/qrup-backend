@@ -6,75 +6,47 @@ const validarCpf = require('validar-cpf');
 
 class EmployeeController {
 	async store(req, res) {
-		const { company_id } = req.params;
 
-		const company = await Company.findByPk(company_id);
+		const schemaCreateEmployee = Yup.object().shape({
+			name: Yup.string().required(),
+			cpf: Yup.string().length(11).required(),
+			password: Yup.string().min(3).required(),
+			role: Yup.number().required()
+		});
 
-		if(!company){
-			return res.status(400).json('Company not found');
+		let isValid = null;
+		try {
+			isValid = await schemaCreateEmployee.validate(req.body, { abortEarly: false});
+		} catch (err) {
+			return res.json({
+				erro: err.errors
+			})
 		}
+
+		const {
+			cpf,
+		} = isValid;
+
+		const validcpf = validarCpf(cpf);
+
+		if(!validcpf) return res.status(400).json('CPF invalid');
+
+		if(req.employee.role != 1) return res.json({ error: 'Employee not admin'});
 
 		const employeeExists = await Employee.findOne({
 			where: {
-				cpf: req.body.cpf,
+				cpf,
 			},
 		});
 
-		if (employeeExists) {
-			return res.status(400).json({
-				error: 'Employee already exists',
-			});
-		}
-		//------------------------------------------------------------------------------------------------------------
-		const schemaName = Yup.object().shape({
-			name: Yup.string().required(),
+		if (employeeExists) return res.status(400).json({ error: 'Employee already exists' });
+
+		const employee = await Employee.create({
+			...req.body,
+			company_id: req.employee.company.id
 		});
 
-		if (!(await schemaName.isValid(req.body))) {
-			return res.status(400).json({
-				error: 'Name validation fails',
-			});
-		}
-		//------------------------------------------------------------------------------------------------------------
-
-		const schemaCpf = Yup.object().shape({
-			cpf: Yup.string().required(),
-		});
-
-		if (!(await schemaCpf.isValid(req.body))) {
-			return res.status(400).json({
-				error: 'CPF validation fails',
-			});
-		}
-		const validcpf = validarCpf(req.body.cpf);
-
-		if(!validcpf){
-		return res.status(400).json('CPF invalid');
-		}
-
-		//------------------------------------------------------------------------------------------------------------
-		// ------------------------------------------------------------------------------------------------------------
-
-		const {
-			id,
-			name,
-			cpf,
-			password,
-			owner,
-			manager,
-			employee
-		} = await Employee.create(req.body);
-
-		return res.json({
-			id,
-			name,
-			cpf,
-			password,
-			owner,
-			manager,
-			employee,
-			company_id
-		});
+		return res.json(employee);
 	}
 
 	async update(req, res) {
@@ -90,7 +62,7 @@ class EmployeeController {
 				error: 'Only managers and owners can update employees',
 			});
 		}
-		//= ========================================================================================
+		
 		const schema = Yup.object().shape({
 			name: Yup.string(),
 			avatar_id: Yup.string(),

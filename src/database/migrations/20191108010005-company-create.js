@@ -13,10 +13,6 @@ module.exports = {
 			type: Sequelize.STRING,
 			allowNull: false,
 		},
-		password_hash: {
-			type: Sequelize.STRING,
-			allowNull: false,
-		},
 		contact: {
 			type: Sequelize.STRING,
 			allowNull: false,

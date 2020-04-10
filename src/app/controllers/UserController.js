@@ -3,65 +3,54 @@ const User = require('../models/User');
 const File = require('../models/File');
 const validarCpf = require('validar-cpf');
 const UserPoints = require('../models/UserPoints');
+const { Op } = require('sequelize');
 
 class UserController {
 	async store(req, res) {
-		const schemaName = Yup.object().shape({
+		const schemaUserStore = Yup.object().shape({
 			name: Yup.string().required(),
+			email: Yup.string().email().required(),
+			cpf: Yup.string().length(11).required(),
+			password: Yup.string().min(4).required(),
+			birth: Yup.date().required(),
+			contact: Yup.string().default('00000000')
 		});
 
-		if (!(await schemaName.isValid(req.body))) {
-			return res.status(400).json({ error: 'Name validation fails' });
-		}
-		const schemaEmail = Yup.object().shape({
-			email: Yup.string().required(),
-		});
-
-		if (!(await schemaEmail.isValid(req.body))) {
-			return res.status(400).json({ error: 'Email validation fails' });
-		}
-		const schemaCpf = Yup.object().shape({
-			cpf: Yup.string().required(),
-    });
-
-		if (!(await schemaCpf.isValid(req.body))) {
-			return res.status(400).json({ error: 'CPF validation fails' });
-    }
-    
-    const validcpf = validarCpf(req.body.cpf);
-
-    if(!validcpf){
-      return res.status(400).json('CPF invalid');
-    }
-
-		const userExists = await User.findOne({ where: { email: req.body.email } });
-
-		if (userExists) {
-			return res.status(400).json({ error: 'User already exists' });
-		}
-
-		const userExists2 = await User.findOne({ where: { cpf: req.body.cpf } });
-
-		if (userExists2) {
-			return res.status(400).json({ error: 'CPF is already being used' });
+		let isValid = null;
+		try {
+			isValid = await schemaUserStore.validate(req.body, { abortEarly: false});
+		} catch (err) {
+			return res.json({
+				erro: err.errors
+			})
 		}
 
 		const {
-			id, name, email, cpf, birth, contact, points,
-		} = await User.create(req.body);
-		await UserPoints.create({
-			user_id: id, total: 0, created_at: new Date(), updated_at: new Date(),
-		});
-
-		return res.json({
-			id,
-			name,
 			email,
 			cpf,
-			birth,
-			contact,
-			points,
+		} = isValid;
+
+		const validcpf = validarCpf(cpf);
+
+		if (!validcpf) {
+			return res.status(400).json({ error: 'CPF invalid' });
+		}
+
+		const userExists = await User.findOne({ 
+			where: {
+				[Op.or]: [
+					{ email },
+					{ cpf }
+				]
+			}
 		});
+
+		if(userExists) return res.json({ error: 'User already exists'});
+
+		const user = await User.create(isValid);
+		await UserPoints.create({ user_id: user.id });
+
+		return res.json(user)
 	}
 
 	async update(req, res) {
@@ -112,12 +101,10 @@ class UserController {
 	async index(req, res) {
 		const users = await User.findOne({
 			where: { id: req.params.user_id },
-			attributes: ['id', 'name', 'email'],
 			include: [
 				{
-					model: File,
-					attributes: ['name', 'path', 'url'],
-					as: 'avatar',
+					model: UserPoints,
+					as: 'points',
 				},
 			],
 		});

@@ -3,6 +3,7 @@ module.exports = {
 		database: 'test',
 		storage: 'test.sqlite',
 		dialect: 'sqlite',
+		seederStorage: 'sequelize',
 		define: {
 			timestamps: true,
 			underscored: true,

@@ -5,14 +5,14 @@ module.exports = {
 			defaultValue: Sequelize.UUIDV4,
 			primaryKey: true,
 		},
-		description: {
-			type: Sequelize.STRING,
-		},
 		user_id: {
 			type: Sequelize.UUID,
 			references: { model: 'users', key: 'id' },
 			onUpdate: 'CASCADE',
 			onDelete: 'SET NULL',
+		},
+		description: {
+			type: Sequelize.STRING,
 		},
 		type: {
 			type: Sequelize.STRING,
@@ -20,9 +20,9 @@ module.exports = {
 		qr: {
 			type: Sequelize.STRING,
 		},
-		active: {
+		enabled: {
 			type: Sequelize.BOOLEAN,
-			defaultValue: true,
+			defaultValue: false,
 		},
 		created_at: {
 			type: Sequelize.DATE,
@@ -33,11 +33,8 @@ module.exports = {
 			allowNull: false,
 		},
 		deleted_at: {
-			type: Sequelize.DATE
+			type: Sequelize.DATE,
 		}
-
-	},{
-		paranoid: true,
 	}),
 
 	down: (queryInterface, Sequelize) => queryInterface.dropTable('cups'),
