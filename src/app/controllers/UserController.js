@@ -3,6 +3,7 @@ const User = require('../models/User');
 const File = require('../models/File');
 const validarCpf = require('validar-cpf');
 const UserPoints = require('../models/UserPoints');
+const Historic = require('../models/Historic');
 const { Op } = require('sequelize');
 
 class UserController {

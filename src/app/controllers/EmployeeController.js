@@ -127,24 +127,17 @@ class EmployeeController {
 	}
 
 	async index(req, res) {
-		const checkUserNotEmployee = await Employee.findOne({
-			where: {
-				id: req.employee_id,
-				employee: false,
-			},
-		});
 
-		if (!checkUserNotEmployee) {
-			return res.status(401).json({
-				error: 'Only managers and owners can list employees',
-			});
-		}
+		if(req.employee.role != 1) return res.json({ error: 'Only managers and owners can list employees'})
+
+
 		const employees = await Employee.findAll({
-			// where:
-			attributes: ['id', 'name', 'cpf', 'password', 'owner', 'manager', 'employee'],
+			where: {
+				company_id: req.employee.company.id
+			},
 			include: [{
 				model: Company,
-				attributes: ['name', 'address', 'contact', 'cnpj'],
+				as: 'company'
 			},
 			{
 				model: File,

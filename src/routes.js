@@ -11,6 +11,7 @@ const CompanyCouponsController = require('./app/controllers/CompanyCouponsContro
 const FileController = require('./app/controllers/FileController');
 const CouponController = require('./app/controllers/CouponController');
 const authMiddleware = require('./app/middlewares/auth');
+const HistoricController = require('./app/controllers/HistoricController');
 
 const adminController = require('./app/controllers/AdminController');
 
@@ -32,6 +33,7 @@ routes.get('/companies/:company_id/employees', authMiddleware, EmployeeControlle
 routes.get('/companies', CompanyController.index);
 routes.get('/companies/:company_id/company-coupons', CompanyCouponsController.index);
 routes.get('/users/:user_id/cups', authMiddleware, CupController.index);
+routes.get('/users/:user_id/historic', authMiddleware, HistoricController.index);
 routes.get('/coupons', CouponController.index);
 routes.get('/files', FileController.index);
 

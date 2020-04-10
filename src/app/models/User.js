@@ -35,7 +35,7 @@ class User extends Sequelize.Model {
 
 	static associate(models) {
 		this.hasMany(models.Cup, { foreignKey: 'id' });
-		this.hasMany(models.UserCoupons, { foreignKey: 'id' });
+		this.hasMany(models.Historic, { foreignKey: 'user_id', as: 'historic' });
 		this.hasOne(models.UserPoints, { foreignKey: 'user_id', as: 'points' });
 		this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
 	}
