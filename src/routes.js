@@ -37,7 +37,7 @@ routes.get('/users/:user_id/historic', authMiddleware, HistoricController.index)
 routes.get('/coupons', CouponController.index);
 routes.get('/files', FileController.index);
 
-routes.put('/users', authMiddleware, UserController.update);
+routes.put('/users/:user_id', authMiddleware, UserController.update);
 routes.put('/companies/:company_id', CompanyController.update);
 routes.put('/companies/:company_id/employees', authMiddleware, EmployeeController.update);
 routes.put('/companies/:company_id/company-coupons', authMiddleware, CompanyCouponsController.update);
