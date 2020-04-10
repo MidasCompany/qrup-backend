@@ -88,7 +88,7 @@ class PointsController {
 			return res.status(400).json({ error: 'Only users can visualize their points' });
 		}
 		const points = await UserPoints.findAll({
-			user_id: isUser.user_id,
+			where : { user_id: isUser.user_id },
 			order: ['total'],
 			include: [
 				{

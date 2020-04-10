@@ -19,7 +19,7 @@ class CupController {
 		if (CupExists) {
 			return res.status(400).json({ error: 'Cup already resgistered' });
 		}
-
+		
 		req.body.user_id = req.params.user_id;
 		
 		const {
