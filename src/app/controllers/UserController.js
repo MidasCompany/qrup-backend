@@ -26,8 +26,12 @@ class UserController {
 		}
 
 		const {
+			name,
 			email,
 			cpf,
+			password,
+			birth,
+			contact
 		} = isValid;
 
 		const validcpf = validarCpf(cpf);
@@ -47,7 +51,14 @@ class UserController {
 
 		if(userExists) return res.json({ error: 'User already exists'});
 
-		const user = await User.create(isValid);
+		const user = await User.create({
+			name,
+			email,
+			cpf,
+			password_temp: password,
+			birth,
+			contact
+		});
 		await UserPoints.create({ user_id: user.id });
 
 		return res.json(user)
