@@ -8,6 +8,7 @@ class CompanyCoupons extends Sequelize.Model {
 				defaultValue: Sequelize.UUIDV4,
 				primaryKey: true,
 			},
+			company_id: Sequelize.UUID,
 			name: Sequelize.STRING,
 			description: Sequelize.STRING,
 			code: Sequelize.STRING,
@@ -20,7 +21,7 @@ class CompanyCoupons extends Sequelize.Model {
 	}
 
 	static associate(models) {
-		this.hasOne(models.UserCoupons, { foreignKey: 'id' });
+		this.hasOne(models.Company, { foreignKey: 'id', sourceKey: 'company_id', as: 'company' });
 		this.belongsTo(models.Company, { foreignKey: 'company_id' });
 	}
 }

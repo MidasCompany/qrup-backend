@@ -4,26 +4,31 @@ const Company = require('../models/Company');
 
 class CompanyCouponsController {
 	async store(req, res) {
-		//-------------------------------------------------------------------------------------------
-		const { company_id } = req.params;
 
-		const company = await Company.findByPk(company_id);
+		const schemaCreateCoupon = Yup.object().shape({
+			name: Yup.string().required(),
+			description: Yup.string().required(),
+			points: Yup.number().positive().required(),
+			code: Yup.string().min(3).required()
+		});
 
-		if(!company){
-			return res.status(400).json('Company not found');
+		let isValid = null;
+		try {
+			isValid = await schemaCreateCoupon.validate(req.body, { abortEarly: false });
+		} catch (err) {
+			return res.json({
+				erro: err.errors
+			})
 		}
 
-		req.body.company_id = req.params.company_id;
+		if (req.employee.role != 1) return res.json({ error: 'Only Owners can create coupons' })
 
-		const { id, name, description, points } = await CompanyCoupons.create(req.body);
-
-		return res.json({
-			id,
-			name,
-			description,
-			points,
-			company_id
+		const coupon = await CompanyCoupons.create({
+			company_id: req.employee.company.id,
+			...isValid
 		});
+
+		return res.json(coupon);
 	}
 
 	async update(req, res) {
@@ -41,8 +46,8 @@ class CompanyCouponsController {
 			});
 		}
 
-		const { id, name, description, points } = await CompanyCoupons.update(req.body); 
-		
+		const { id, name, description, points } = await CompanyCoupons.update(req.body);
+
 		return res.json({
 			id,
 			name,
