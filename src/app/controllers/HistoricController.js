@@ -1,5 +1,6 @@
 const Historic = require('../models/Historic');
-
+const CompanyCoupons = require('../models/CompanyCoupons');
+const Company = require('../models/Company');
 class HistoricController {
 	async index(req, res) {
 		let query = {}
@@ -17,6 +18,16 @@ class HistoricController {
 			where: {
 				user_id: req.user.id
 			},
+			include:[
+				{
+					model: CompanyCoupons,
+					as: 'coupon'
+				},
+				{
+					model: Company,
+					as: 'company'
+				}
+			],
 			...query
 		})
 		res.json({

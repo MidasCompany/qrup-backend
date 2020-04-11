@@ -22,6 +22,7 @@ class Historic extends Sequelize.Model {
 	static associate(models) {
 		this.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
 		this.belongsTo(models.CompanyCoupons, { foreignKey: 'coupon_id', as: 'coupon' });
+		this.belongsTo(models.Company, { foreignKey: 'company_id', as: 'company'})
 	}
 }
 
