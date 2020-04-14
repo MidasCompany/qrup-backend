@@ -20,7 +20,7 @@ class UserController {
 		try {
 			isValid = await schemaUserStore.validate(req.body, { abortEarly: false});
 		} catch (err) {
-			return res.json({
+			return res.status(400).json({
 				erro: err.errors
 			})
 		}
