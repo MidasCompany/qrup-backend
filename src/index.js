@@ -3,15 +3,21 @@ const User = require('./app/models/User');
 const Company = require('./app/models/Company');
 const Cup = require('./app/models/Cup');
 const Employee = require('./app/models/Employee');
-const UserCoupons = require('./app/models/UserCoupons');
+const Historic = require('./app/models/Historic');
 const CompanyCoupons = require('./app/models/CompanyCoupons');
-const File = require('./app/models/File');
 const UserPoints = require('./app/models/UserPoints');
 
 const databaseConfig = require('./config/database');
 
-const models = [User, Company, Cup, Employee, UserCoupons, CompanyCoupons,
-	UserPoints, File];
+const models = [
+	User, 
+	Company, 
+	Cup, 
+	Employee, 
+	Historic, 
+	CompanyCoupons,
+	UserPoints, 
+];
 
 class Database {
 	constructor() {

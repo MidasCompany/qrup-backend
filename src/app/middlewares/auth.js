@@ -40,7 +40,7 @@ module.exports = async (req, res, next) => {
 		
 		if(!data) return res.json({ error: type + ' not found'})
 	
-		req[decoded.type] = data;
+		req[decoded.type] = data;// req.user | req.employee
 		
 		return next();
 	} catch (err) {

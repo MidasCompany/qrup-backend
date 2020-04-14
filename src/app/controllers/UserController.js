@@ -1,8 +1,8 @@
 const Yup = require('yup');
 const User = require('../models/User');
-const File = require('../models/File');
 const validarCpf = require('validar-cpf');
 const UserPoints = require('../models/UserPoints');
+const Historic = require('../models/Historic');
 const { Op } = require('sequelize');
 
 class UserController {
@@ -26,8 +26,12 @@ class UserController {
 		}
 
 		const {
+			name,
 			email,
 			cpf,
+			password,
+			birth,
+			contact
 		} = isValid;
 
 		const validcpf = validarCpf(cpf);
@@ -47,7 +51,14 @@ class UserController {
 
 		if(userExists) return res.json({ error: 'User already exists'});
 
-		const user = await User.create(isValid);
+		const user = await User.create({
+			name,
+			email,
+			cpf,
+			password_temp: password,
+			birth,
+			contact
+		});
 		await UserPoints.create({ user_id: user.id });
 
 		return res.json(user)
@@ -57,45 +68,52 @@ class UserController {
 		const schema = Yup.object().shape({
 			name: Yup.string(),
 			email: Yup.string().email(),
-			avatar_id: Yup.string(),
-			oldPassword: Yup.string().min(6),
-			password: Yup.string().min(6).when('oldPassword', (oldPassword, field) => (oldPassword ? field.required() : field)),
+			contact: Yup.string(),
+			oldPassword: Yup.string().min(3),
+			password: Yup.string().min(3).when('oldPassword', (oldPassword, field) => (oldPassword ? field.required() : field)),
 			confirmPassword: Yup.string().when('password', (password, field) => (password ? field.required().oneOf([Yup.ref('password')]) : field)),
 		});
 
-		if (!(await schema.isValid(req.body))) {
-			return res.status(400).json({ error: 'Validation fails' });
+		let isValid = null;
+		try{
+			isValid = await schema.validate(req.body, { abortEarly: false});
+		}catch(err){
+			return res.json({
+				erro: err.errors
+			})
 		}
-		const { email, oldPassword } = req.body;
+		
+		const { 
+			email, 
+			name,
+			oldPassword,
+			password,
+			contact
+		} = isValid;
 
-		const user = await User.findByPk(req.user_id);
+		let user = req.user;
 
 		if (email && email != user.email) {
-			const userExists = await User.findOne({ where: { email } });
-
-			if (userExists) {
-				return res.status(400).json({ error: 'User already exists' });
-			}
+			user.email = email;
 		}
 
-		if (oldPassword && !(await user.checkPassword(oldPassword))) {
+		if(name && name != user.name){
+			user.name = name;
+		}
+
+		if(contact && contact != user.contact){
+			user.contact = contact;
+		}
+
+		if (oldPassword && await user.checkPassword(oldPassword)) {
+			user.password_temp = password
+		} else if(oldPassword){
 			return res.status(401).json({ error: 'Password does not match' });
 		}
 
-		const {
-			id, name, cpf, birth, contact, avatar_id,
-		} = await user.update(req.body);
+		await user.save();
 
-		return res.json({
-			id,
-			name,
-			email,
-			cpf,
-			birth,
-			contact,
-			avatar_id,
-			points,
-		});
+		return res.json(user);
 	}
 
 	async index(req, res) {

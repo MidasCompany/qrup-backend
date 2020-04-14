@@ -8,7 +8,6 @@ require('./index');
 class App {
 	constructor() {
 		this.server = express();
-		this.server.use(morgan(':method :url :status :response-time ms'));
 		this.middlewares();
 		this.routes();
 		this.server.use('/', (req, res) => {
@@ -21,7 +20,8 @@ class App {
 
 	middlewares() {
 		this.server.use(express.json());
-		this.server.use('/files', express.static(path.resolve(__dirname, '..', 'tmp', 'uploads')));
+		this.server.use('/', express.static('public'));
+		this.server.use(morgan(':method :url :status :response-time ms'));
 	}
 
 	routes() {

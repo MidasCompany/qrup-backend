@@ -4,6 +4,7 @@ const Employee = require('../models/Employee');
 const UserPoints = require('../models/UserPoints');
 const Company = require('../models/Company');
 const CompanyCoupons = require('../models/CompanyCoupons');
+const Historic = require('../models/Historic');
 const Yup = require('yup');
 
 class CouponController {
@@ -60,6 +61,13 @@ class CouponController {
 				return res.status(400).json({ error: 'Cant add to total' });
 			}
 
+			await Historic.create({
+				user_id: qr_cup.user_id,
+				company_id: req.employee.company.id,
+				points: 1,
+				mode: 'add'
+			})
+
 			return res.json({ status: 'Points added' });
 		}
 		else if (type === 'take') {
@@ -83,6 +91,15 @@ class CouponController {
 				points.total = points.total - coupon.points;
 
 				await points.save();
+
+				await Historic.create({
+					user_id,
+					company_id: req.employee.company.id,
+					coupon_id: coupon_id,
+					points: coupon.points,
+					mode: 'rem'
+				})
+
 				return res.status(200).json({ status: 'Points removed' })
 			}
 		} else {

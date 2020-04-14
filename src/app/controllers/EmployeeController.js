@@ -1,7 +1,6 @@
 const Yup = require('yup');
 const Employee = require('../models/Employee');
 const Company = require('../models/Company');
-const File = require('../models/File');
 const validarCpf = require('validar-cpf');
 
 class EmployeeController {
@@ -25,6 +24,9 @@ class EmployeeController {
 
 		const {
 			cpf,
+			name, 
+			role,
+			password
 		} = isValid;
 
 		const validcpf = validarCpf(cpf);
@@ -42,7 +44,10 @@ class EmployeeController {
 		if (employeeExists) return res.status(400).json({ error: 'Employee already exists' });
 
 		const employee = await Employee.create({
-			...req.body,
+			password_temp: password,
+			name,
+			cpf,
+			role,
 			company_id: req.employee.company.id
 		});
 
@@ -127,29 +132,17 @@ class EmployeeController {
 	}
 
 	async index(req, res) {
-		const checkUserNotEmployee = await Employee.findOne({
-			where: {
-				id: req.employee_id,
-				employee: false,
-			},
-		});
 
-		if (!checkUserNotEmployee) {
-			return res.status(401).json({
-				error: 'Only managers and owners can list employees',
-			});
-		}
+		if(req.employee.role != 1) return res.json({ error: 'Only managers and owners can list employees'})
+
+
 		const employees = await Employee.findAll({
-			// where:
-			attributes: ['id', 'name', 'cpf', 'password', 'owner', 'manager', 'employee'],
+			where: {
+				company_id: req.employee.company.id
+			},
 			include: [{
 				model: Company,
-				attributes: ['name', 'address', 'contact', 'cnpj'],
-			},
-			{
-				model: File,
-				attributes: ['name', 'path', 'url'],
-				as: 'avatar',
+				as: 'company'
 			},
 			],
 		});

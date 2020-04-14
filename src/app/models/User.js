@@ -13,9 +13,11 @@ class User extends Sequelize.Model {
 				name: Sequelize.STRING,
 				email: Sequelize.STRING,
 				password: Sequelize.STRING,
+				password_temp: Sequelize.VIRTUAL,
 				contact: Sequelize.STRING,
 				cpf: Sequelize.STRING,
 				birth: Sequelize.DATE,
+				avatar_id: Sequelize.STRING,
 			},
 			{
 				sequelize,
@@ -23,8 +25,8 @@ class User extends Sequelize.Model {
 		);
 
 		this.addHook('beforeSave', async (user) => {
-			if (user.password) {
-				user.password = await bcrypt.hash(user.password, 8);
+			if (user.password_temp) {
+				user.password = await bcrypt.hash(user.password_temp, 8);
 			}
 		});
 
@@ -35,9 +37,8 @@ class User extends Sequelize.Model {
 
 	static associate(models) {
 		this.hasMany(models.Cup, { foreignKey: 'id' });
-		this.hasMany(models.UserCoupons, { foreignKey: 'id' });
+		this.hasMany(models.Historic, { foreignKey: 'user_id', as: 'historic' });
 		this.hasOne(models.UserPoints, { foreignKey: 'user_id', as: 'points' });
-		this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
 	}
 
 	checkPassword(password) {
