@@ -43,6 +43,16 @@ module.exports = async (req, res, next) => {
 					}
 				]
 			});
+
+			data = data.toJSON();
+
+			let em_companies = data.company;
+
+			let com = em_companies.map( item => {
+				if(item.company_id === decoded.company_id) return item;
+			});
+			
+			data.company = com[0].company[0];
 		}
 		
 		if(!data) return res.json({ error: type + ' not found'})

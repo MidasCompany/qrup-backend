@@ -22,6 +22,11 @@ class SessionController {
 				then: Yup.string().length(11).required(),
 				otherwise: Yup.string().transform( x => undefined)
 			}),
+			company_id: Yup.string().when('type', {
+				is: type => type === 'employee',
+				then: Yup.string(),
+				otherwise: Yup.string().transform( x => undefined)
+			})
 		});
 
 		let isValid = null;
@@ -32,7 +37,7 @@ class SessionController {
 			return res.status(400).json({ error: err.errors });
 		}
 
-		const { email, password, cpf, type } = isValid;
+		const { email, password, cpf, company_id, type } = isValid;
 
 		let data = null;
 
@@ -83,10 +88,9 @@ class SessionController {
 			}
 		}
 
-
 		return res.json({
 			[type]: data,
-			token: jwt.sign({ id: data.id, type }, authConfig.secret, {
+			token: jwt.sign({ id: data.id, type, company_id }, authConfig.secret, {
 				expiresIn: authConfig.expiresIn,
 			}),
 		});

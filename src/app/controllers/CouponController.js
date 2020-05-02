@@ -48,12 +48,12 @@ class CouponController {
 				}
 			});
 
+			if (!qr_cup) return res.status(400).json({ error: 'Cup not registered' });
+
 			const points = await UserPoints.findOne({
 				where: { user_id: qr_cup.user_id },
 			});
 	
-			if (!qr_cup) return res.status(400).json({ error: 'Cup not registered' });
-
 			try {
 				points.total = points.total + 1;
 				await points.save(); //Adiciona 1 ponto por leitura
