@@ -5,6 +5,7 @@ const UserPoints = require('../models/UserPoints');
 const Employee = require('../models/Employee');
 const authConfig = require('../../config/auth');
 const Company = require('../models/Company');
+const CompanyEmployee = require('../models/CompanyEmployee');
 
 class SessionController {
 	async store(req, res) {
@@ -61,8 +62,14 @@ class SessionController {
 				},
 				include:[
 					{
-						model: Company,
-						as: 'company'
+						model: CompanyEmployee,
+						as: 'company',
+						include:[
+							{
+								model: Company,
+								as: 'company'
+							}
+						]
 					}
 				]
 			});

@@ -31,8 +31,8 @@ routes.get('/companies/:company_id/employees', authMiddleware, EmployeeControlle
 routes.get('/companies', CompanyController.index);
 routes.get('/companies/:company_id/company-coupons', CompanyCouponsController.index);
 routes.get('/users/:user_id/cups', authMiddleware, CupController.index);
-routes.get('/users/:user_id/historic', authMiddleware, HistoricController.index);
 routes.get('/coupons', CouponController.index);
+routes.get('/historic', authMiddleware, HistoricController.index);
 
 routes.put('/users/:user_id', authMiddleware, UserController.update);
 routes.put('/companies/:company_id', CompanyController.update);
@@ -45,7 +45,7 @@ routes.delete('/files', authMiddleware, FileController.delete);
 
 
 //Test
-routes.get('/allCups',  adminController.allCups);
+routes.get('/allCups', adminController.allCups);
 
 
 module.exports = routes;

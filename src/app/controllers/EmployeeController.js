@@ -1,6 +1,7 @@
 const Yup = require('yup');
 const Employee = require('../models/Employee');
 const Company = require('../models/Company');
+const CompanyEmployee = require('../models/CompanyEmployee');
 const validarCpf = require('validar-cpf');
 
 class EmployeeController {
@@ -35,23 +36,33 @@ class EmployeeController {
 
 		if(req.employee.role != 1) return res.json({ error: 'Employee not admin'});
 
-		const employeeExists = await Employee.findOne({
+		Employee.findOrCreate({
 			where: {
-				cpf,
+				cpf
 			},
-		});
+			defaults: {
+				name,
+				password_temp: password,
+				role,
+			}
+		}).spread(async (user, created) => {
 
-		if (employeeExists) return res.status(400).json({ error: 'Employee already exists' });
 
-		const employee = await Employee.create({
-			password_temp: password,
-			name,
-			cpf,
-			role,
-			company_id: req.employee.company.id
-		});
-
-		return res.json(employee);
+			let temp = await CompanyEmployee.findOne({
+				where: {
+					company_id: req.params.company_id,
+					employee_id: user.id,
+				}
+			}) 
+			if(!temp){
+				await CompanyEmployee.create({
+				   company_id: req.params.company_id,
+				   employee_id: user.id,
+			   });
+			}
+	
+			return res.json(user);
+		})
 	}
 
 	async update(req, res) {

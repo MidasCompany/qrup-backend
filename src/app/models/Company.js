@@ -14,7 +14,6 @@ class Company extends Sequelize.Model {
 			contact: Sequelize.STRING,
 			cnpj: Sequelize.STRING,
 			avatar_id: Sequelize.STRING,
-			representative: Sequelize.STRING,
 		},
 		{
 			sequelize,

@@ -6,6 +6,7 @@ const Employee = require('./app/models/Employee');
 const Historic = require('./app/models/Historic');
 const CompanyCoupons = require('./app/models/CompanyCoupons');
 const UserPoints = require('./app/models/UserPoints');
+const CompanyEmployee = require('./app/models/CompanyEmployee');
 
 const databaseConfig = require('./config/database');
 
@@ -17,6 +18,7 @@ const models = [
 	Historic, 
 	CompanyCoupons,
 	UserPoints, 
+	CompanyEmployee
 ];
 
 class Database {

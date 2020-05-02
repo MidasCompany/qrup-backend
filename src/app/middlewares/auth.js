@@ -3,6 +3,7 @@ const authConfig = require('../../config/auth');
 const User = require('../models/User');
 const Employee = require('../models/Employee');
 const Company = require('../models/Company');
+const CompanyEmployee = require('../models/CompanyEmployee');
 
 module.exports = async (req, res, next) => {
 	const authHeader = req.headers.authorization;
@@ -31,8 +32,14 @@ module.exports = async (req, res, next) => {
 				},
 				include:[
 					{
-						model: Company,
-						as: 'company'
+						model: CompanyEmployee,
+						as: 'company',
+						include:[
+							{
+								model: Company,
+								as: 'company'
+							}
+						]
 					}
 				]
 			});

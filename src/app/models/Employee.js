@@ -15,7 +15,6 @@ class Employee extends Sequelize.Model {
 			password: Sequelize.STRING,
 			password_temp: Sequelize.VIRTUAL,
 			avatar_id: Sequelize.STRING,
-			company_id: Sequelize.UUID
 		},
 		{
 			sequelize,
@@ -32,7 +31,7 @@ class Employee extends Sequelize.Model {
 	}
 
 	static associate(models) {
-		this.belongsTo(models.Company, { foreignKey: 'company_id', as: 'company' });
+		this.hasMany(models.CompanyEmployee, { foreignKey: 'employee_id', as: 'company' });
 	}
 
 	checkPassword(password) {

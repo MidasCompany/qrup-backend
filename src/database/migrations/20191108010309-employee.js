@@ -17,12 +17,6 @@ module.exports = {
 			type: Sequelize.STRING,
 			allowNull: false,
 		},
-		company_id: {
-			type: Sequelize.UUID,
-			references: { model: 'companies', key: 'id' },
-			onUpdate: 'CASCADE',
-			onDelete: 'CASCADE',
-		},
 		role: {
 			type: Sequelize.INTEGER,
 			defaultValue: 3,

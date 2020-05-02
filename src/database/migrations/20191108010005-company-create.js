@@ -22,10 +22,6 @@ module.exports = {
 			allowNull: false,
 			unique: true,
 		},
-		representative: {
-			type: Sequelize.STRING,
-			allowNull: false,
-		},
 		avatar_id: {
 			type: Sequelize.STRING,
 			allowNull: false,
