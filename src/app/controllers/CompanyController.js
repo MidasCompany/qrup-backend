@@ -98,9 +98,7 @@ class CompanyController {
 	}
 
 	async index(req, res) {
-		const companies = await Company.findAll({
-			attributes: ['id', 'name', 'address', 'contact', 'cnpj', 'representative'],
-		});
+		const companies = await Company.findAll();
 
 		if (companies < 1) {
 			return res.status(400).json({ error: 'No companies registered' });

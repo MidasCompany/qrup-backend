@@ -47,7 +47,6 @@ class EmployeeController {
 			}
 		}).spread(async (user, created) => {
 
-
 			let temp = await CompanyEmployee.findOne({
 				where: {
 					company_id: req.params.company_id,
@@ -146,16 +145,16 @@ class EmployeeController {
 
 		if(req.employee.role != 1) return res.json({ error: 'Only managers and owners can list employees'})
 
-
-		const employees = await Employee.findAll({
+		const employees = await CompanyEmployee.findAll({
 			where: {
 				company_id: req.employee.company.id
 			},
-			include: [{
-				model: Company,
-				as: 'company'
-			},
-			],
+			include:[
+				{
+					model: Employee,
+					as: 'employee'
+				}
+			]
 		});
 
 		if (employees < 1) {

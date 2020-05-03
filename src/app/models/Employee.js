@@ -21,7 +21,6 @@ class Employee extends Sequelize.Model {
 		});
 
 		this.addHook('beforeSave', async (employee) => {
-			console.log(employee)
 			if (employee.password_temp) {
 				employee.password = await bcrypt.hash(employee.password_temp, 8);
 			}
