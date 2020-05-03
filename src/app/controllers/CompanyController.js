@@ -89,12 +89,47 @@ class CompanyController {
 
 	async update(req, res) {
 
-		const {
-		} = await Company.update(req.body, {
-			where: { id: req.params.company_id }
+		if(req.employee.role !== 1){
+			return res.json({
+				status: "You não have Permission aqui"
+			})
+		}
+
+		const schema = Yup.object().shape({
+			name: Yup.string(),
+			address: Yup.string(),
+			contact: Yup.string()
 		});
 
-		return res.json({ ok: "brabo" });
+
+		let isValid = null;
+		try {
+			isValid = await schema.validate(req.body, { abortEarly: false });
+		} catch (err) {
+			return res.json({
+				erro: err.errors
+			})
+		}
+
+		const {
+			name,
+			address,
+			contact
+		} = isValid;
+
+		const company = await Company.findOne({
+			where: {
+				id: req.employee.company.id
+			}
+		});
+
+		if(name)  company.name = name;
+		if(address) company.address = address;
+		if(contact) company.contact = contact;
+
+		await company.save();
+
+		return res.json(company);
 	}
 
 	async index(req, res) {

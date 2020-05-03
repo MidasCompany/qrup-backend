@@ -65,80 +65,62 @@ class EmployeeController {
 	}
 
 	async update(req, res) {
-		const checkUserNotEmployee = await Employee.findOne({
-			where: {
-				id: req.employee_id,
-				employee: false,
-			},
-		});
 
-		if (!checkUserNotEmployee) {
-			return res.status(401).json({
-				error: 'Only managers and owners can update employees',
-			});
+		if(req.employee.role !== 1){
+			return res.json({
+				status: 'Não ta autorizado cabeça de pica'
+			})
 		}
-		
+
 		const schema = Yup.object().shape({
+			employee_id: Yup.string().required(),
 			name: Yup.string(),
-			avatar_id: Yup.string(),
+			role: Yup.string(),
 			oldPassword: Yup.string().min(6),
 			password: Yup.string().min(6).when('oldPassword', (oldPassword, field) => (oldPassword ? field.required() : field)),
 			confirmPassword: Yup.string().when('password', (password, field) => (password ? field.required().oneOf([Yup.ref('password')]) : field)),
 		});
 
-		if (!(await schema.isValid(req.body))) {
-			return res.status(400).json({
-				error: 'Validation fails',
-			});
+		let isValid = null;
+
+		try {
+			isValid = await schema.validate({ 
+				...req.body, 
+				employee_id: req.params.employee_id 
+			}, { abortEarly: false});
+		} catch (err) {
+			return res.json({
+				erro: err.errors
+			})
 		}
+
 		const {
-			cpf,
+			name,
+			role,
+			employee_id,
 			oldPassword,
-		} = req.body;
+			password,
+			confirmPassword
+		} = isValid;
 
-		const employee = await Employee.findByPk(req.employee_id);
+		const employee = await Employee.findOne({
+			where: {
+				id: employee_id
+			}
+		});
 
-		if (cpf && cpf != employee.cpf) {
-			const employeeExists = await Employee.findOne({
-				where: {
-					cpf,
-				},
-			});
-
-			if (!employeeExists) {
-				return res.status(400).json({
-					error: 'Employee doenst exists',
-				});
+		if(name) employee.name = name;
+		if(role) employee.role = role;
+		
+		if(oldPassword && password && confirmPassword) {
+			if(employee.checkPassword(oldPassword) && password === confirmPassword){
+				employee.password_temp = password;
 			}
 		}
 
-		if (oldPassword && !(await employee.checkPassword(oldPassword))) {
-			return res.status(401).json({
-				error: 'Password does not match',
-			});
-		}
+		await employee.save();
 
-		const {
-			id,
-			name,
-			password,
-			owner,
-			manager,
-			employee: func,
-			avatar_id,
-		} = await employee.update(req.body);
-
-		return res.json({
-			id,
-			name,
-			cpf,
-			password,
-			owner,
-			manager,
-			func,
-			company_id,
-			avatar_id,
-		});
+		res.json(employee.toJSON());
 	}
 
 	async index(req, res) {

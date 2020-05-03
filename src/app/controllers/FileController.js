@@ -17,14 +17,25 @@ class FileController {
 			req.user.avatar_id = dest + new_filename;
 			await req.user.save();
 		} else if(role === 'employee'){
+			const employee = await Employee.findOne({
+				where: {
+					id: req.employee.id
+				}
+			});
 			new_filename = req.employee.id + ext;
-			req.employee.avatar_id = dest + new_filename;
-			await req.employee.save();
+			employee.avatar_id = dest + new_filename;
+
+			await employee.save();
 		} else if(role === 'company'){
 			if(req.employee.role == 1){
+				const company = await Company.findOne({
+					where: {
+						id: req.employee.company.id
+					}
+				});
 				new_filename = req.employee.company.id + ext;
-				req.employee.company.avatar_id = dest + new_filename;
-				await req.employee.company.save();
+				company.avatar_id = dest + new_filename;
+				await company.save();
 			} else {
 				fs.unlinkSync(join(req.file.path))
 				return res.json({

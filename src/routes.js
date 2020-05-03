@@ -35,9 +35,9 @@ routes.get('/coupons', CouponController.index);
 routes.get('/historic', authMiddleware, HistoricController.index);
 
 routes.put('/users/:user_id', authMiddleware, UserController.update);
-routes.put('/companies/:company_id', CompanyController.update);
-routes.put('/companies/:company_id/employees', authMiddleware, EmployeeController.update);
-routes.put('/companies/:company_id/company-coupons', authMiddleware, CompanyCouponsController.update);
+routes.put('/companies/:company_id', authMiddleware, CompanyController.update);
+routes.put('/companies/:company_id/employees/:employee_id', authMiddleware, EmployeeController.update);
+//routes.put('/companies/:company_id/company-coupons', authMiddleware, CompanyCouponsController.update);
 
 routes.delete('/employees', authMiddleware, EmployeeController.delete);
 routes.delete('/users/:user_id/cups/:qr', authMiddleware, CupController.delete);
