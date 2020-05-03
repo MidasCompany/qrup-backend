@@ -39,7 +39,7 @@ routes.put('/companies/:company_id', authMiddleware, CompanyController.update);
 routes.put('/companies/:company_id/employees/:employee_id', authMiddleware, EmployeeController.update);
 //routes.put('/companies/:company_id/company-coupons', authMiddleware, CompanyCouponsController.update);
 
-routes.delete('/employees', authMiddleware, EmployeeController.delete);
+routes.delete('/employees/:employee_id', authMiddleware, EmployeeController.delete);
 routes.delete('/users/:user_id/cups/:qr', authMiddleware, CupController.delete);
 routes.delete('/files', authMiddleware, FileController.delete);
 routes.delete('/companies/:company_id/coupons/:coupon_id', authMiddleware, CouponController.delete);

@@ -3,6 +3,9 @@ const Employee = require('../models/Employee');
 const Company = require('../models/Company');
 const CompanyEmployee = require('../models/CompanyEmployee');
 const validarCpf = require('validar-cpf');
+const {
+	Op
+} = require('sequelize');
 
 class EmployeeController {
 	async store(req, res) {
@@ -149,28 +152,28 @@ class EmployeeController {
 	}
 
 	async delete(req, res) {
-		const checkUserOwner = await Employee.findOne({
-			where: {
-				id: req.employee_id,
-				owner: false,
-			},
-		});
 
-		if (!checkUserOwner) {
-			return res.status(401).json({
-				error: 'Only owners can delete employees',
-			});
+		if(req.employee.role !== 1){
+			return	res.json({
+				status: 'não tem permissão corno '
+			})
 		}
 
-		const {
-			id,
-		} = req.body;
-
-		await Employee.destroy({
+		const employee = await Employee.findOne({
 			where: {
-				id,
+				id: req.params.employee_id,
+				role: {[Op.not]: 1}
 			},
 		});
+
+		if (!employee) {
+			return res.status(401).json({
+				error: 'Você não pode se deletar',
+			});
+		} else {
+			await employee.destroy();
+		}
+
 		return res.json({
 			message: 'Successfully deleted',
 		});
