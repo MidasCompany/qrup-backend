@@ -121,6 +121,25 @@ class CouponController {
 
 		return res.json(coupons);
 	}
+
+	async delete(req, res){
+
+		const coupon_id = req.params.coupon_id;
+		const company_id = req.params.company_id;
+
+		const coupon = await CompanyCoupons.findOne({
+			where:{
+				id: coupon_id,
+				company_id,
+			}
+		});
+
+		await coupon.destroy();
+
+		res.json({
+			status: 'coupon deleted'
+		})
+	}
 }
 
 module.exports = new CouponController();
