@@ -79,9 +79,8 @@ class EmployeeController {
 			employee_id: Yup.string().required(),
 			name: Yup.string(),
 			role: Yup.string(),
-			oldPassword: Yup.string().min(6),
-			password: Yup.string().min(6).when('oldPassword', (oldPassword, field) => (oldPassword ? field.required() : field)),
-			confirmPassword: Yup.string().when('password', (password, field) => (password ? field.required().oneOf([Yup.ref('password')]) : field)),
+			password: Yup.string().min(6),
+			confirmPassword: Yup.string().min(6),
 		});
 
 		let isValid = null;
@@ -115,10 +114,8 @@ class EmployeeController {
 		if(name) employee.name = name;
 		if(role) employee.role = role;
 		
-		if(oldPassword && password && confirmPassword) {
-			if(employee.checkPassword(oldPassword) && password === confirmPassword){
-				employee.password_temp = password;
-			}
+		if(password && confirmPassword && (password === confirmPassword)) {
+			employee.password_temp = password;
 		}
 
 		await employee.save();
