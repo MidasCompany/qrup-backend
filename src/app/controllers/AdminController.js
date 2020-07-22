@@ -1,10 +1,9 @@
-const Cup = require('../models/Cup');
-
+const Cup = require('../models/Cup')
 
 class AdminController {
-	async allCups(req, res) {
-		return res.json(await Cup.findAll())
-	} 
+  async allCups (req, res) {
+    return res.json(await Cup.findAll())
+  }
 }
 
-module.exports = new AdminController();
+module.exports = new AdminController()

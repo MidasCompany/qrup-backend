@@ -10,8 +10,8 @@
     "migrate_undo": "sequelize db:migrate:undo:all",
     "seed": "sequelize db:seed:all",
     "seed_undo": "sequelize db:seed:undo:all",
-    "dev": "yarn migrate && yarn db_init  && nodemon --exec node -r dotenv/config src/server.js --ignore test",
-    "dev_reset": "yarn db_init_undo && yarn migrate_undo && yarn dev",
+    "dev": "yarn migrate && yarn seed  && nodemon --exec node -r dotenv/config src/server.js --ignore test",
+    "dev_reset": "yarn seed_undo && yarn migrate_undo && yarn dev",
     "lint": "eslint src/**/*.js",
     "test": "set NODE_ENV=test && jest"
   },
@@ -36,7 +36,15 @@
     "yup": "^0.28.0"
   },
   "devDependencies": {
-    "jest": "^25.1.0",
-    "nodemon": "^2.0.2"
+    "faker": "^4.1.0",
+    "jest": "^26.0.1",
+    "supertest": "^4.0.2",
+    "nodemon": "^2.0.2",
+    "eslint": "^7.1.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
   }
 }

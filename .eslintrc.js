@@ -1,25 +1,20 @@
 module.exports = {
   env: {
-    browser: true,
-	es6: true,
-	node: true
+    node: true,
+    jest: true
   },
   extends: [
-    'airbnb-base',
+    'standard'
   ],
   globals: {
     Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
+    SharedArrayBuffer: 'readonly'
   },
   parserOptions: {
     ecmaVersion: 2018,
-    sourceType: 'module',
+    sourceType: 'module'
   },
   rules: {
-	"indent": ["error", "tab"],
-	"no-tabs": 0,
-	"global-require": "error",
-	"linebreak-style": 0,
-	"eslint linebreak-style": [0, "error", "windows"],
-  },
-};
+    camelcase: 'off'
+  }
+}

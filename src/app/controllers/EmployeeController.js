@@ -1,180 +1,173 @@
-const Yup = require('yup');
-const Employee = require('../models/Employee');
-const Company = require('../models/Company');
-const CompanyEmployee = require('../models/CompanyEmployee');
-const validarCpf = require('validar-cpf');
+const Yup = require('yup')
+const Employee = require('../models/Employee')
+const CompanyEmployee = require('../models/CompanyEmployee')
+const validarCpf = require('validar-cpf')
 const {
-	Op
-} = require('sequelize');
+  Op
+} = require('sequelize')
 
 class EmployeeController {
-	async store(req, res) {
+  async store (req, res) {
+    const schemaCreateEmployee = Yup.object().shape({
+      name: Yup.string().required(),
+      cpf: Yup.string().length(11).required(),
+      password: Yup.string().min(3).required(),
+      role: Yup.number().required()
+    })
 
-		const schemaCreateEmployee = Yup.object().shape({
-			name: Yup.string().required(),
-			cpf: Yup.string().length(11).required(),
-			password: Yup.string().min(3).required(),
-			role: Yup.number().required()
-		});
+    let isValid = null
+    try {
+      isValid = await schemaCreateEmployee.validate(req.body, { abortEarly: false })
+    } catch (err) {
+      return res.json({
+        erro: err.errors
+      })
+    }
 
-		let isValid = null;
-		try {
-			isValid = await schemaCreateEmployee.validate(req.body, { abortEarly: false});
-		} catch (err) {
-			return res.json({
-				erro: err.errors
-			})
-		}
+    const {
+      cpf,
+      name,
+      role,
+      password
+    } = isValid
 
-		const {
-			cpf,
-			name, 
-			role,
-			password
-		} = isValid;
+    const validcpf = validarCpf(cpf)
 
-		const validcpf = validarCpf(cpf);
+    if (!validcpf) return res.status(400).json('CPF invalid')
 
-		if(!validcpf) return res.status(400).json('CPF invalid');
+    if (req.employee.role !== 1) return res.json({ error: 'Employee not admin' })
 
-		if(req.employee.role != 1) return res.json({ error: 'Employee not admin'});
+    Employee.findOrCreate({
+      where: {
+        cpf
+      },
+      defaults: {
+        name,
+        password_temp: password,
+        role
+      }
+    }).spread(async (user, created) => {
+      const temp = await CompanyEmployee.findOne({
+        where: {
+          company_id: req.params.company_id,
+          employee_id: user.id
+        }
+      })
+      if (!temp) {
+        await CompanyEmployee.create({
+          company_id: req.params.company_id,
+          employee_id: user.id
+        })
+      }
 
-		Employee.findOrCreate({
-			where: {
-				cpf
-			},
-			defaults: {
-				name,
-				password_temp: password,
-				role,
-			}
-		}).spread(async (user, created) => {
+      return res.json(user)
+    })
+  }
 
-			let temp = await CompanyEmployee.findOne({
-				where: {
-					company_id: req.params.company_id,
-					employee_id: user.id,
-				}
-			}) 
-			if(!temp){
-				await CompanyEmployee.create({
-				   company_id: req.params.company_id,
-				   employee_id: user.id,
-			   });
-			}
-	
-			return res.json(user);
-		})
-	}
+  async update (req, res) {
+    if (req.employee.role !== 1) {
+      return res.json({
+        status: 'Não ta autorizado cabeça de pica'
+      })
+    }
 
-	async update(req, res) {
+    const schema = Yup.object().shape({
+      employee_id: Yup.string().required(),
+      name: Yup.string(),
+      role: Yup.string(),
+      password: Yup.string().min(6),
+      confirmPassword: Yup.string().min(6)
+    })
 
-		if(req.employee.role !== 1){
-			return res.json({
-				status: 'Não ta autorizado cabeça de pica'
-			})
-		}
+    let isValid = null
 
-		const schema = Yup.object().shape({
-			employee_id: Yup.string().required(),
-			name: Yup.string(),
-			role: Yup.string(),
-			password: Yup.string().min(6),
-			confirmPassword: Yup.string().min(6),
-		});
+    try {
+      isValid = await schema.validate({
+        ...req.body,
+        employee_id: req.params.employee_id
+      }, { abortEarly: false })
+    } catch (err) {
+      return res.json({
+        erro: err.errors
+      })
+    }
 
-		let isValid = null;
+    const {
+      name,
+      role,
+      employee_id,
+      password,
+      confirmPassword
+    } = isValid
 
-		try {
-			isValid = await schema.validate({ 
-				...req.body, 
-				employee_id: req.params.employee_id 
-			}, { abortEarly: false});
-		} catch (err) {
-			return res.json({
-				erro: err.errors
-			})
-		}
+    const employee = await Employee.findOne({
+      where: {
+        id: employee_id
+      }
+    })
 
-		const {
-			name,
-			role,
-			employee_id,
-			oldPassword,
-			password,
-			confirmPassword
-		} = isValid;
+    if (name) employee.name = name
+    if (role) employee.role = role
 
-		const employee = await Employee.findOne({
-			where: {
-				id: employee_id
-			}
-		});
+    if (password && confirmPassword && (password === confirmPassword)) {
+      employee.password_temp = password
+    }
 
-		if(name) employee.name = name;
-		if(role) employee.role = role;
-		
-		if(password && confirmPassword && (password === confirmPassword)) {
-			employee.password_temp = password;
-		}
+    await employee.save()
 
-		await employee.save();
+    res.json(employee.toJSON())
+  }
 
-		res.json(employee.toJSON());
-	}
+  async index (req, res) {
+    if (req.employee.role !== 1) return res.json({ error: 'Only managers and owners can list employees' })
 
-	async index(req, res) {
+    const employees = await CompanyEmployee.findAll({
+      where: {
+        company_id: req.employee.company.id
+      },
+      include: [
+        {
+          model: Employee,
+          as: 'employee'
+        }
+      ]
+    })
 
-		if(req.employee.role != 1) return res.json({ error: 'Only managers and owners can list employees'})
+    if (employees < 1) {
+      return res.status(400).json({
+        error: 'No employees registered'
+      })
+    }
 
-		const employees = await CompanyEmployee.findAll({
-			where: {
-				company_id: req.employee.company.id
-			},
-			include:[
-				{
-					model: Employee,
-					as: 'employee'
-				}
-			]
-		});
+    return res.json(employees)
+  }
 
-		if (employees < 1) {
-			return res.status(400).json({
-				error: 'No employees registered',
-			});
-		}
+  async delete (req, res) {
+    if (req.employee.role !== 1) {
+      return res.json({
+        status: 'não tem permissão corno '
+      })
+    }
 
-		return res.json(employees);
-	}
+    const employee = await Employee.findOne({
+      where: {
+        id: req.params.employee_id,
+        role: { [Op.not]: 1 }
+      }
+    })
 
-	async delete(req, res) {
+    if (!employee) {
+      return res.status(401).json({
+        error: 'Você não pode se deletar'
+      })
+    } else {
+      await employee.destroy()
+    }
 
-		if(req.employee.role !== 1){
-			return	res.json({
-				status: 'não tem permissão corno '
-			})
-		}
-
-		const employee = await Employee.findOne({
-			where: {
-				id: req.params.employee_id,
-				role: {[Op.not]: 1}
-			},
-		});
-
-		if (!employee) {
-			return res.status(401).json({
-				error: 'Você não pode se deletar',
-			});
-		} else {
-			await employee.destroy();
-		}
-
-		return res.json({
-			message: 'Successfully deleted',
-		});
-	}
+    return res.json({
+      message: 'Successfully deleted'
+    })
+  }
 }
 
-module.exports = new EmployeeController();
+module.exports = new EmployeeController()

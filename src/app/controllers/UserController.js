@@ -1,9 +1,8 @@
-const Yup = require('yup');
-const User = require('../models/User');
-const validarCpf = require('validar-cpf');
-const UserPoints = require('../models/UserPoints');
-const Historic = require('../models/Historic');
-const { Op } = require('sequelize');
+const Yup = require('yup')
+const User = require('../models/User')
+const validarCpf = require('validar-cpf')
+const UserPoints = require('../models/UserPoints')
+const { Op } = require('sequelize')
 
 class UserController {
   async store (req, res) {
@@ -14,11 +13,11 @@ class UserController {
       password: Yup.string().min(4).required(),
       birth: Yup.date().required(),
       contact: Yup.string().default('00000000')
-    });
+    })
 
-    let isValid = null;
+    let isValid = null
     try {
-      isValid = await schemaUserStore.validate(req.body, { abortEarly: false });
+      isValid = await schemaUserStore.validate(req.body, { abortEarly: false })
     } catch (err) {
       return res.status(400).json({
         erro: err.errors
@@ -32,12 +31,12 @@ class UserController {
       password,
       birth,
       contact
-    } = isValid;
+    } = isValid
 
-    const validcpf = validarCpf(cpf);
+    const validcpf = validarCpf(cpf)
 
     if (!validcpf) {
-      return res.status(400).json({ error: 'CPF invalid' });
+      return res.status(400).json({ error: 'CPF invalid' })
     }
 
     const userExists = await User.findOne({
@@ -47,9 +46,9 @@ class UserController {
           { cpf }
         ]
       }
-    });
+    })
 
-    if (userExists) return res.status(400).json({ error: 'User already exists' });
+    if (userExists) return res.status(400).json({ error: 'User already exists' })
 
     const user = await User.create({
       name,
@@ -58,8 +57,8 @@ class UserController {
       password_temp: password,
       birth,
       contact
-    });
-    await UserPoints.create({ user_id: user.id });
+    })
+    await UserPoints.create({ user_id: user.id })
 
     return res.json(user)
   }
@@ -71,12 +70,12 @@ class UserController {
       contact: Yup.string(),
       oldPassword: Yup.string().min(3),
       password: Yup.string().min(3).when('oldPassword', (oldPassword, field) => (oldPassword ? field.required() : field)),
-      confirmPassword: Yup.string().when('password', (password, field) => (password ? field.required().oneOf([Yup.ref('password')]) : field)),
-    });
+      confirmPassword: Yup.string().when('password', (password, field) => (password ? field.required().oneOf([Yup.ref('password')]) : field))
+    })
 
-    let isValid = null;
+    let isValid = null
     try {
-      isValid = await schema.validate(req.body, { abortEarly: false });
+      isValid = await schema.validate(req.body, { abortEarly: false })
     } catch (err) {
       return res.json({
         erro: err.errors
@@ -89,31 +88,31 @@ class UserController {
       oldPassword,
       password,
       contact
-    } = isValid;
+    } = isValid
 
-    let user = req.user;
+    const user = req.user
 
-    if (email && email != user.email) {
-      user.email = email;
+    if (email && email !== user.email) {
+      user.email = email
     }
 
-    if (name && name != user.name) {
-      user.name = name;
+    if (name && name !== user.name) {
+      user.name = name
     }
 
-    if (contact && contact != user.contact) {
-      user.contact = contact;
+    if (contact && contact !== user.contact) {
+      user.contact = contact
     }
 
     if (oldPassword && await user.checkPassword(oldPassword)) {
       user.password_temp = password
     } else if (oldPassword) {
-      return res.status(401).json({ error: 'Password does not match' });
+      return res.status(401).json({ error: 'Password does not match' })
     }
 
-    await user.save();
+    await user.save()
 
-    return res.json(user);
+    return res.json(user)
   }
 
   async index (req, res) {
@@ -122,17 +121,17 @@ class UserController {
       include: [
         {
           model: UserPoints,
-          as: 'points',
-        },
-      ],
-    });
+          as: 'points'
+        }
+      ]
+    })
 
     if (users < 1) {
-      return res.status(400).json({ error: 'No users registered' });
+      return res.status(400).json({ error: 'No users registered' })
     }
 
-    return res.json(users);
+    return res.json(users)
   }
 }
 
-module.exports = new UserController();
+module.exports = new UserController()
