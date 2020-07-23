@@ -19,9 +19,12 @@ class UserController {
     try {
       isValid = await schemaUserStore.validate(req.body, { abortEarly: false })
     } catch (err) {
-      return res.status(400).json({
-        erro: err.errors
-      })
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError',
+        body: err.errors
+      }
+      return next()
     }
 
     const {
@@ -36,7 +39,11 @@ class UserController {
     const validcpf = validarCpf(cpf)
 
     if (!validcpf) {
-      return res.status(400).json({ error: 'CPF invalid' })
+      res.locals.payload = {
+        status: 400,
+        code: 'cpfInvalid'
+      }
+      return next()
     }
 
     const userExists = await User.findOne({
@@ -48,7 +55,13 @@ class UserController {
       }
     })
 
-    if (userExists) return res.status(400).json({ error: 'User already exists' })
+    if (userExists) {
+      res.locals.payload = {
+        status: 400,
+        code: 'userAlreadyExists'
+      }
+      return next()
+    }
 
     const user = await User.create({
       name,
@@ -60,7 +73,12 @@ class UserController {
     })
     await UserPoints.create({ user_id: user.id })
 
-    return res.json(user)
+    res.locals.payload = {
+      status: 200,
+      code: 'userCreated',
+      body: user
+    }
+    return next()
   }
 
   async update (req, res) {
@@ -77,9 +95,12 @@ class UserController {
     try {
       isValid = await schema.validate(req.body, { abortEarly: false })
     } catch (err) {
-      return res.json({
-        erro: err.errors
-      })
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError',
+        body: err.errors
+      }
+      return next()
     }
 
     const {
@@ -107,12 +128,21 @@ class UserController {
     if (oldPassword && await user.checkPassword(oldPassword)) {
       user.password_temp = password
     } else if (oldPassword) {
-      return res.status(401).json({ error: 'Password does not match' })
+      res.locals.payload = {
+        status: 400,
+        code: 'passwordDoesNotMatch'
+      }
+      return next()
     }
 
     await user.save()
 
-    return res.json(user)
+    res.locals.payload = {
+      status: 200,
+      code: 'userUpdated',
+      body: user
+    }
+    return next()
   }
 
   async index (req, res) {
@@ -127,7 +157,11 @@ class UserController {
     })
 
     if (users < 1) {
-      return res.status(400).json({ error: 'No users registered' })
+      res.locals.payload = {
+        status: 400,
+        code: 'noUsersRegistered'
+      }
+      return next()
     }
 
     return res.json(users)

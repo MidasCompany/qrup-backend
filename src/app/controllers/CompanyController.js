@@ -21,9 +21,13 @@ class CompanyController {
     try {
       isValid = await schemaCreateCompany.validate(req.body, { abortEarly: false })
     } catch (err) {
-      return res.json({
-        erro: err.errors
-      })
+
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError',
+        body: err.errors
+      }
+      return next();
     }
 
     const {
@@ -38,11 +42,23 @@ class CompanyController {
 
     const validcnpj = validate(cnpj)
 
-    if (!validcnpj) return res.status(400).json({ error: 'Cnpj invalid' })
+    if (!validcnpj) {
+      res.locals.payload = {
+        status: 400,
+        code: 'cnpjInvalid'
+      }
+      return next();
+    } 
 
     const validcpf = validarCpf(cpf)
 
-    if (!validcpf) return res.status(400).json('CPF invalid')
+    if (!validcpf) {
+      res.locals.payload = {
+        status: 400,
+        code: 'cpfInvalid'
+      }
+      return next();
+    }
 
     const companyExists = await Company.findOne({
       where: {
@@ -50,7 +66,13 @@ class CompanyController {
       }
     })
 
-    if (companyExists) return res.status(400).json({ error: 'Company already exists' })
+    if (companyExists) {
+      res.locals.payload = {
+        status: 400,
+        code: 'companyAlreadyExists'
+      }
+      return next();
+    }
 
     let employee = null
 
@@ -79,15 +101,23 @@ class CompanyController {
         owner: true
       })
 
-      return res.json(company)
+      res.locals.payload = {
+        status: 200,
+        code: 'createCompany',
+        body: company
+      }
+      return next();
     })
   }
 
   async update (req, res) {
     if (req.employee.role !== 1) {
-      return res.json({
-        status: 'You não have Permission aqui'
-      })
+
+      res.locals.payload = {
+        status: 400,
+        code: 'noPermission'
+      }
+      return next();
     }
 
     const schema = Yup.object().shape({
@@ -100,9 +130,12 @@ class CompanyController {
     try {
       isValid = await schema.validate(req.body, { abortEarly: false })
     } catch (err) {
-      return res.json({
-        erro: err.errors
-      })
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError',
+        body: err.errors
+      }
+      return next();
     }
 
     const {
@@ -123,17 +156,31 @@ class CompanyController {
 
     await company.save()
 
-    return res.json(company)
+    res.locals.payload = {
+      status: 200,
+      code: 'companyFound',
+      body: company
+    }
+    return next();
   }
 
   async index (req, res) {
     const companies = await Company.findAll()
 
     if (companies < 1) {
-      return res.status(400).json({ error: 'No companies registered' })
+      res.locals.payload = {
+        status: 400,
+        code: 'noCompaniesRegistered'
+      }
+      return next();
     }
 
-    return res.json(companies)
+    res.locals.payload = {
+      status: 200,
+      code: 'allCompaniesFound',
+      body: companies
+    }
+    return next();
   }
 }
 

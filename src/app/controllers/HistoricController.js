@@ -60,13 +60,18 @@ class HistoricController {
       ],
       ...query
     })
-    res.json({
-      metadata: {
-        totalPage: Math.ceil(all_tudo.count / limit) || 1,
-        totalRow: all_tudo.count
-      },
-      data: all_tudo.rows
-    })
+    res.locals.payload = {
+      status: 200,
+      code: 'historicFound',
+      body: {
+        metadata: {
+          totalPage: Math.ceil(all_tudo.count / limit) || 1,
+          totalRow: all_tudo.count
+        },
+        data: all_tudo.rows
+      }
+    }
+    return next()
   }
 }
 

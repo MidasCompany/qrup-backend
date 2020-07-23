@@ -34,7 +34,12 @@ class SessionController {
     try {
       isValid = await schemaSession.validate(req.body, { abortEarly: false })
     } catch (err) {
-      return res.status(400).json({ error: err.errors })
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError',
+        body: err.errors
+      }
+      return next()
     }
 
     const { email, password, cpf, company_id, type } = isValid
@@ -54,10 +59,19 @@ class SessionController {
         ]
       })
 
-      if (!data) return res.status(401).json({ error: 'User not found' })
-
+      if (!data) {
+        res.locals.payload = {
+          status: 400,
+          code: 'userNotFound'
+        }
+        return next()
+      } 
       if (!(await data.checkPassword(password))) {
-        return res.status(401).json({ error: 'Password does not match' })
+        res.locals.payload = {
+          status: 400,
+          code: 'passwordDoesNotMatch'
+        }
+        return next()
       }
     } else if (type === 'employee') {
       data = await Employee.findOne({
@@ -79,20 +93,33 @@ class SessionController {
       })
 
       if (!data) {
-        return res.status(401).json({ error: 'Employee not found' })
+        res.locals.payload = {
+          status: 400,
+          code: 'employeeNotFound'
+        }
+        return next()
       }
 
       if (!(await data.checkPassword(password))) {
-        return res.status(401).json({ error: 'Password does not match' })
+        res.locals.payload = {
+          status: 400,
+          code: 'passwordDoesNotMatch'
+        }
+        return next()
       }
     }
 
-    return res.json({
-      [type]: data,
-      token: jwt.sign({ id: data.id, type, company_id }, authConfig.secret, {
-        expiresIn: authConfig.expiresIn
-      })
-    })
+    res.locals.payload = {
+      status: 200,
+      code: 'sessionCreated',
+      body: {
+        [type]: data,
+        token: jwt.sign({ id: data.id, type, company_id }, authConfig.secret, {
+          expiresIn: authConfig.expiresIn
+        })
+      }
+    }
+    return next()
   }
 }
 

@@ -19,9 +19,12 @@ class EmployeeController {
     try {
       isValid = await schemaCreateEmployee.validate(req.body, { abortEarly: false })
     } catch (err) {
-      return res.json({
-        erro: err.errors
-      })
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError',
+        body: err.errors
+      }
+      return next();
     }
 
     const {
@@ -33,9 +36,21 @@ class EmployeeController {
 
     const validcpf = validarCpf(cpf)
 
-    if (!validcpf) return res.status(400).json('CPF invalid')
+    if (!validcpf) {
+      res.locals.payload = {
+        status: 400,
+        code: 'cpfInvalid'
+      }
+      return next();
+    } 
 
-    if (req.employee.role !== 1) return res.json({ error: 'Employee not admin' })
+    if (req.employee.role !== 1) {
+      res.locas.payload = {
+        status: 400,
+        code: 'noPermission'
+      }
+      return next();
+    } 
 
     Employee.findOrCreate({
       where: {
@@ -59,16 +74,22 @@ class EmployeeController {
           employee_id: user.id
         })
       }
-
-      return res.json(user)
+      res.locals.payload = {
+        status: 200,
+        code: 'employeeCreated',
+        body: user
+      }
+      return next();
     })
   }
 
   async update (req, res) {
     if (req.employee.role !== 1) {
-      return res.json({
-        status: 'Não ta autorizado cabeça de pica'
-      })
+      res.locals.payload = {
+        status: 400,
+        code: 'noPermission',
+      }
+      return next();
     }
 
     const schema = Yup.object().shape({
@@ -87,9 +108,12 @@ class EmployeeController {
         employee_id: req.params.employee_id
       }, { abortEarly: false })
     } catch (err) {
-      return res.json({
-        erro: err.errors
-      })
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError',
+        body: err.errors
+      }
+      return next();
     }
 
     const {
@@ -115,12 +139,22 @@ class EmployeeController {
 
     await employee.save()
 
-    res.json(employee.toJSON())
+    res.locals.payload = {
+      status: 200,
+      code: 'employeeFound',
+      body: employee.toJSON()
+    }
+    return next();
   }
 
   async index (req, res) {
-    if (req.employee.role !== 1) return res.json({ error: 'Only managers and owners can list employees' })
-
+    if (req.employee.role !== 1) {
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError'
+      }
+      return next();
+    } 
     const employees = await CompanyEmployee.findAll({
       where: {
         company_id: req.employee.company.id
@@ -134,19 +168,27 @@ class EmployeeController {
     })
 
     if (employees < 1) {
-      return res.status(400).json({
-        error: 'No employees registered'
-      })
+      res.locals.payload = {
+        status: 400,
+        code: 'noEmployeeRegistered'
+      }
+      return next();
     }
-
-    return res.json(employees)
+    res.locals.payload = {
+      status: 400,
+      code: 'employeeFound',
+      body: employees
+    }
+    return next();
   }
 
   async delete (req, res) {
     if (req.employee.role !== 1) {
-      return res.json({
-        status: 'não tem permissão corno '
-      })
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError'
+      }
+      return next();
     }
 
     const employee = await Employee.findOne({
@@ -157,16 +199,20 @@ class EmployeeController {
     })
 
     if (!employee) {
-      return res.status(401).json({
-        error: 'Você não pode se deletar'
-      })
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError'
+      }
+      return next();
     } else {
       await employee.destroy()
     }
 
-    return res.json({
-      message: 'Successfully deleted'
-    })
+    res.locals.payload = {
+      status: 200,
+      code: 'employeeDeleted'
+    }
+    return next();
   }
 }
 
