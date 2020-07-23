@@ -13,7 +13,13 @@ class CupController {
       where: { qr }
     })
 
-    if (!CupEx) return res.status(400).json({ error: 'Cup not already resgistered' })
+    if (!CupEx) {
+      res.locals.payload = {
+        status: 400,
+        code: 'cupNotRegistered',
+      }
+      return next();
+    } 
 
     CupEx.user_id = user.id
     CupEx.description = description
@@ -21,7 +27,12 @@ class CupController {
 
     await CupEx.save()
 
-    return res.json(CupEx)
+    res.locas.payload = {
+      status: 200,
+      code: 'cupFound',
+      body: CupEx
+    }
+    return next();
   }
 
   async index (req, res) {
@@ -33,10 +44,18 @@ class CupController {
     })
 
     if (!cups) {
-      return res.status(400).json({ error: 'No cups registered' })
+      res.locals.payload = {
+        status: 400,
+        code: 'noCupsRegistered'
+      }
+      return next();
     }
-
-    return res.json(cups)
+    res.locals.payload = {
+      status: 200,
+      code: 'allCupsFound',
+      body: cups
+    }
+    return next();
   }
 
   async delete (req, res) {
@@ -48,14 +67,20 @@ class CupController {
       }
     })
     if (!cup) {
-      return res.status(400).json({ error: 'Cup not registered' })
+      res.locals.payload = {
+        status: 400,
+        code: 'cupNotRegistered'
+      }
+      return next();
     }
 
     await cup.destroy()
 
-    return res.json({
-      message: 'Successfully deleted'
-    })
+    res.locals.payload = {
+      status: 200,
+      code: 'cupDeleted'
+    }
+    return next();
   }
 }
 

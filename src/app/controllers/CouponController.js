@@ -6,7 +6,7 @@ const Historic = require('../models/Historic')
 const Yup = require('yup')
 
 class CouponController {
-  async store (req, res) {
+  async store (req, res, next) {
     const SchemaCoupon = Yup.object().shape({
       qr: Yup.string().when('type', {
         is: type => type === 'read',
@@ -19,7 +19,6 @@ class CouponController {
         otherwise: Yup.string().transform(x => undefined)
       }),
       type: Yup.string().required().oneOf(['read', 'take'])
-
     })
 
     let isValid = null
@@ -27,9 +26,13 @@ class CouponController {
     try {
       isValid = await SchemaCoupon.validate(req.body, { abortEarly: false })
     } catch (err) {
-      return res.json({
-        erro: err.errors
-      })
+
+		res.locals.payload = {
+			status: 400,
+			code: 'validationError',
+			body: err.errors
+		}
+		return next();
     }
 
     const {
@@ -45,8 +48,13 @@ class CouponController {
         }
       })
 
-      if (!qr_cup) return res.status(400).json({ error: 'Cup not registered' })
-
+	  if (!qr_cup) {
+		  res.locals.payload = {
+			  status: 400, 
+			  code: 'noCupsRegistered'
+		  }
+		  return next();
+	  }
       const points = await UserPoints.findOne({
         where: { user_id: qr_cup.user_id }
       })
@@ -55,7 +63,11 @@ class CouponController {
         points.total = points.total + 1
         await points.save() // Adiciona 1 ponto por leitura
       } catch (err) {
-        return res.status(400).json({ error: 'Cant add to total' })
+		  res.locals.payload = {
+			  status: 400,
+			  code: 'addError'
+		  }
+		  return next();
       }
 
       await Historic.create({
@@ -65,7 +77,12 @@ class CouponController {
         mode: 'add'
       })
 
-      return res.json({ status: 'Points added' })
+	  res.locals.payload = {
+		  status: 200,
+		  code: 'addPoints'
+	  }
+	  return next();
+
     } else if (type === 'take') {
       const [
         coupon_id,
@@ -81,7 +98,13 @@ class CouponController {
       })
 
       if (coupon && points) {
-        if (points.total < coupon.points) return res.status(400).json({ error: 'You dont have enough points' })
+		if (points.total < coupon.points) {
+			res.locals.payload = {
+				status: 400,
+				code: 'noPointsEnough'
+			}
+			return next();
+		}
 
         points.total = points.total - coupon.points
 
@@ -95,10 +118,19 @@ class CouponController {
           mode: 'rem'
         })
 
-        return res.status(200).json({ status: 'Points removed' })
+		res.locals.payload = {
+			status: 200,
+			code: 'pointsRemoved'
+		}
+		return next();
+
       }
     } else {
-      return res.status(400).json({ error: 'Type must be defined' })
+		res.locals.payload = {
+			status: 400,
+			code: 'noTypeDefined'
+		}
+		return next();
     }
   }
 
@@ -113,15 +145,20 @@ class CouponController {
     if (coupons < 1) {
       res.locals.payload = {
         status: 400,
-        code: 'noCupRegistered'
+		code: 'noCouponsRegistered'
       }
       return next()
     }
 
-    return res.json(coupons)
+    res.locals.payload = {
+		status: 200,
+		code: '',
+		body: coupons
+	}
+	return next();
   }
 
-  async delete (req, res) {
+  async delete (req, res, next) {
     const coupon_id = req.params.coupon_id
     const company_id = req.params.company_id
 
@@ -134,9 +171,11 @@ class CouponController {
 
     await coupon.destroy()
 
-    res.json({
-      status: 'coupon deleted'
-    })
+	res.locals.payload = {
+		status: 200,
+		code: 'couponDeleted'
+	}
+	return next();
   }
 }
 

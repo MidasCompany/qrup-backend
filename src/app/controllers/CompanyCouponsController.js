@@ -16,9 +16,13 @@ class CompanyCouponsController {
     try {
       isValid = await schemaCreateCoupon.validate(req.body, { abortEarly: false })
     } catch (err) {
-      return res.json({
-        erro: err.errors
-      })
+
+      res.locals.payload = {
+        status: 400,
+        code: 'validationError',
+        body: err.errors
+      }
+      return next();
     }
 
     if (req.employee.role !== 1) return res.json({ error: 'Only Owners can create coupons' })
@@ -28,7 +32,12 @@ class CompanyCouponsController {
       ...isValid
     })
 
-    return res.json(coupon)
+    res.locals.payload = {
+      status: 200,
+      code: 'couponCreated',
+      body: coupon
+    }
+    return next();
   }
 
   async update (req, res) {
@@ -41,19 +50,27 @@ class CompanyCouponsController {
     })
 
     if (!checkUserNotEmployeeAndManager) {
-      return res.status(401).json({
-        error: 'Only owners can update coupons'
-      })
+
+      res.locals.payload = {
+        status: 403,
+        code: 'notOwner'
+      }
+      return next();
     }
 
     const { id, name, description, points } = await CompanyCoupons.update(req.body)
 
-    return res.json({
-      id,
-      name,
-      description,
-      points
-    })
+    res.locals.payload = {
+      status: 200,
+      code: 'couponUpdated',
+      body: {
+        id,
+        name,
+        description,
+        points
+      }
+    }
+    return next();
   }
 
   async index (req, res) {
@@ -67,10 +84,18 @@ class CompanyCouponsController {
     })
 
     if (coupons < 1) {
-      return res.status(400).json({ error: 'No coupons registered' })
+      res.locals.payload = {
+        status: 400,
+        code: 'noCouponsRegistered'
+      }
+      return next();
     }
-
-    return res.json(coupons)
+    res.locals.payload = {
+      status: 200,
+      code: 'couponsFound',
+      body: coupons
+    }
+    return next();
   }
 }
 

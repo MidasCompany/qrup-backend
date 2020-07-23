@@ -36,9 +36,11 @@ class FileController {
         await company.save()
       } else {
         fs.unlinkSync(join(req.file.path))
-        return res.json({
-          error: 'Only owners can update logos'
-        })
+        res.locals.payload = {
+          status: 400,
+          code: 'noPermission'
+        }
+        return next();
       }
     }
 
@@ -46,7 +48,11 @@ class FileController {
       if (err) console.log('ERROR: ' + err)
     })
 
-    return res.json({ status: 'ok' })
+    res.locals.payload = {
+      status: 200,
+      code: 'avatarRenamed'
+    }
+    return next();
   }
 
   async delete (req, res) {
@@ -74,7 +80,11 @@ class FileController {
       }
     }
 
-    res.json({ status: 'ok' })
+    res.locals.payload = {
+      status: 200,
+      code: 'avatarDeleted',
+    }
+    return next();
   }
 }
 module.exports = new FileController()
