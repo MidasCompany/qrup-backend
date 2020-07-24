@@ -13,7 +13,7 @@
     "dev": "yarn migrate && yarn seed  && nodemon --exec node -r dotenv/config src/server.js --ignore test",
     "dev_reset": "yarn seed_undo && yarn migrate_undo && yarn dev",
     "lint": "eslint src/**/*.js",
-    "test": "set NODE_ENV=test && jest"
+    "test": "export NODE_ENV=test && yarn migrate && jest"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
