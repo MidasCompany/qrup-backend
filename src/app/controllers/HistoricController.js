@@ -4,7 +4,7 @@ const Company = require('../models/Company')
 const { Op } = require('sequelize')
 
 class HistoricController {
-  async index (req, res) {
+  async index (req, res, next) {
     const {
       page,
       limit,

@@ -4,7 +4,7 @@ const Company = require('../models/Company')
 const Employee = require('../models/Employee')
 
 class CompanyCouponsController {
-  async store (req, res) {
+  async store (req, res, next) {
     const schemaCreateCoupon = Yup.object().shape({
       name: Yup.string().required(),
       description: Yup.string().required(),
@@ -40,7 +40,7 @@ class CompanyCouponsController {
     return next();
   }
 
-  async update (req, res) {
+  async update (req, res, next) {
     const checkUserNotEmployeeAndManager = await Employee.findOne({
       where: {
         id: req.employee_id,
@@ -73,7 +73,7 @@ class CompanyCouponsController {
     return next();
   }
 
-  async index (req, res) {
+  async index (req, res, next) {
     const coupons = await CompanyCoupons.findAll({
       where: { company_id: req.params.company_id },
       attributes: ['id', 'name', 'description', 'points'],

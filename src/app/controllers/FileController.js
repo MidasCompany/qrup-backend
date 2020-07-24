@@ -4,7 +4,7 @@ const { join } = require('path')
 const Employee = require('../models/Employee')
 const Company = require('../models/Company')
 class FileController {
-  async store (req, res) {
+  async store (req, res, next) {
     const role = req.query.role
     const dest = `/uploads/${role}/`
     const ext = '.' + req.file.filename.split('.')[1]
@@ -55,7 +55,7 @@ class FileController {
     return next();
   }
 
-  async delete (req, res) {
+  async delete (req, res, next) {
     const role = req.query.role
 
     if (role === 'user') {

@@ -1,7 +1,7 @@
 module.exports = {
   production: {
     database: 'test',
-    storage: 'test.sqlite',
+    storage: 'production.sqlite',
     dialect: 'sqlite',
     seederStorage: 'sequelize',
     define: {
@@ -22,7 +22,7 @@ module.exports = {
   },
   development: {
     database: 'test',
-    storage: 'test.sqlite',
+    storage: 'development.sqlite',
     dialect: 'sqlite',
     define: {
       timestamps: true,

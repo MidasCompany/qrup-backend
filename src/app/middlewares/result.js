@@ -1,6 +1,6 @@
 const messages = require('../../config/messages')
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
   let msg = ''
   const payload = res.locals.payload
 

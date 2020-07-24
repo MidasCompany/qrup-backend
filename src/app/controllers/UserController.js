@@ -5,7 +5,7 @@ const UserPoints = require('../models/UserPoints')
 const { Op } = require('sequelize')
 
 class UserController {
-  async store (req, res) {
+  async store (req, res, next) {
     const schemaUserStore = Yup.object().shape({
       name: Yup.string().required(),
       email: Yup.string().email().required(),
@@ -81,7 +81,7 @@ class UserController {
     return next()
   }
 
-  async update (req, res) {
+  async update (req, res, next) {
     const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string().email(),
@@ -145,7 +145,7 @@ class UserController {
     return next()
   }
 
-  async index (req, res) {
+  async index (req, res, next) {
     const users = await User.findOne({
       where: { id: req.params.user_id },
       include: [

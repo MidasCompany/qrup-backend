@@ -1,7 +1,7 @@
 const Cup = require('../models/Cup')
 
 class CupController {
-  async store (req, res) {
+  async store (req, res, next) {
     const {
       description,
       qr
@@ -35,7 +35,7 @@ class CupController {
     return next();
   }
 
-  async index (req, res) {
+  async index (req, res, next) {
     const cups = await Cup.findAll({
       where: {
         user_id: req.user.id
@@ -58,7 +58,7 @@ class CupController {
     return next();
   }
 
-  async delete (req, res) {
+  async delete (req, res, next) {
     const cup = await Cup.findOne({
       where: {
         qr: req.params.qr,
