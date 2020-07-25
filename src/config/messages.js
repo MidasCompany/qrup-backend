@@ -39,4 +39,5 @@ module.exports = {
   passwordDoesNotMatch: 'Password does not match',
   employeeNotFound: 'Employee not found',
   sessionCreated: 'Session created successfully',
+  userFound: 'The user was found'
 }

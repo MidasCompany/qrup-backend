@@ -27,7 +27,7 @@ class CupController {
 
     await CupEx.save()
 
-    res.locas.payload = {
+    res.locals.payload = {
       status: 200,
       code: 'cupFound',
       body: CupEx

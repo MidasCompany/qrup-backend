@@ -164,6 +164,11 @@ class UserController {
       return next()
     }
 
+    res.locals.payload = {
+      status: 200,
+      code: 'userFound',
+      body: users
+    }
     return res.json(users)
   }
 }
