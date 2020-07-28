@@ -175,7 +175,7 @@ class EmployeeController {
       return next();
     }
     res.locals.payload = {
-      status: 400,
+      status: 200,
       code: 'employeeFound',
       body: employees
     }

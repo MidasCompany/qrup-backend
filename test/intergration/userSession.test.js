@@ -1,7 +1,8 @@
 require('../../src/index')
 const request = require('supertest');
 const app = require('../../src/app');
-const  User  = require('../../src/app/models/User');
+const User = require('../../src/app/models/User');
+const Cup = require('../../src/app/models/Cup');
 const Company = require('../../src/app/models/Company');
 const Employee = require('../../src/app/models/Employee');
 const CompanyCoupons = require('../../src/app/models/CompanyCoupons');
@@ -131,7 +132,7 @@ describe ('Authentication', () => { //categorizar os testes
     it('should access all cups', async () => {
         const getCups = await request(app)
         .get('/allCups')
-
+        console.log(getCups.body)
         expect(getCups.status).toBe(200)
     })
 
@@ -158,6 +159,7 @@ describe ('Authentication', () => { //categorizar os testes
             description: "copo do Pocoyo",
 	        qr: "ffa7fcfe"
         })
+        console.log(cup.body)
         expect(cup.status).toBe(200)
     })
 
@@ -334,4 +336,151 @@ describe ('Authentication', () => { //categorizar os testes
         })   
         expect(read.status).toBe(200)
     })
-})
+
+    //-------------------------------------DELETE----------------------------------
+    it('should delete cups from users', async () => {
+        //id do usuário
+        const user2 = await User.findOne({
+            where: {
+                email: "caiovini.aa@gmail.com",
+            }
+        })
+        
+        //token do usuário
+        const login2 = await request(app)
+        .post('/sessions')
+        .send({
+            type: 'user',
+            email: 'caiovini.aa@gmail.com',
+            password: 'bigoda22'
+        })
+        expect(login2.body).toHaveProperty("body.token") 
+
+        //add a cup to the user
+        const attachCup = await request(app) 
+        .post('/users/'+ user2.id +'/cups')
+        .set('Authorization', `Bearer ${login2.body.body.token}`)
+        .send({
+            description: "copo do caio",
+	        qr: "ffa7fcfe"
+        })
+
+        expect(attachCup.status).toBe(200)
+
+        //see if user has the cup
+        const hasCup = await request(app)
+        .get('/users/'+ user2.id +'/cups')
+        .set('Authorization', `Bearer ${login2.body.body.token}`)
+
+        console.log(hasCup.body.body[0].qr)
+
+        expect(hasCup.status).toBe(200)
+        
+        //qr
+        
+        //delete a cup
+        const deleteCup = await request(app)
+        .delete('/users/'+ user2.id +'/cups/' + hasCup.body.body[0].qr)
+        .set('Authorization', `Bearer ${login2.body.body.token}`)
+        
+
+        expect(deleteCup.status).toBe(200)
+        
+    })
+
+    it('should delete a coupon', async () => {
+        //company_id
+        const getCompany = await Company.findOne({
+            where: {
+                cnpj: "13086620000137"
+            }
+        })
+
+        //token do dono
+        const login = await request(app)
+        .post('/sessions')
+        .send({
+            cpf: "33670919015",
+	        password: "midas",
+	        company_id: getCompany.id,
+	        type: "employee"
+        })
+
+        expect(login.body).toHaveProperty("body.token")
+
+        //criar cupom
+        const couponCreate = await request(app)
+        .post('/companies/'+ getCompany.id +'/coupons')
+        .set('Authorization', `Bearer ${login.body.body.token}`)
+        .send({
+            name: "Porrada no Paulo",
+	        description: "Lanchar o Paulo no soco",
+	        points: 1,
+	        code: "AmumuDoPaulo"
+        })
+
+        expect(couponCreate.status).toBe(200)
+
+        //encontrar o cupom
+        const getCoupon = await CompanyCoupons.findOne({
+            where: {
+                code: "AmumuDoPaulo"
+            }
+        })
+
+        //deletar o cupom
+        const deleteCoupon = await request(app)
+        .delete('/companies/'+ getCompany.id +'/coupons/' + getCoupon.id)
+        .set('Authorization', `Bearer ${login.body.body.token}`)
+
+        expect(deleteCoupon.status).toBe(200)
+    }) 
+
+    it('should delete a employee', async () => {
+        //achar empresa
+        const company = await Company.findOne({
+            where: {
+                cnpj: "13086620000137"
+            }
+        })
+
+        //login como dono 
+        //token do dono
+        const login = await request(app)
+        .post('/sessions')
+        .send({
+            cpf: "33670919015",
+	        password: "midas",
+	        company_id: company.id,
+	        type: "employee"
+        })
+
+        expect(login.body).toHaveProperty("body.token")
+           
+        //criar funcionário
+        const createEmployee = await request(app)
+        .post('/companies/'+ company.id +'/employees')
+        .set('Authorization', `Bearer ${login.body.body.token}`)
+        .send({
+            name: "Alessandro",
+	        cpf: "06070359003",
+	        password: "alessandro",
+	        role: 3
+        })
+
+        expect(createEmployee.status).toBe(200)
+
+        //id do funcionário que vai ser deletado
+        const employee = await Employee.findOne({
+            where: {
+                cpf: "06070359003"
+            }
+        })
+        
+        const deleteEmployee = await request(app)
+        .delete('/employees/' + employee.id)
+        .set('Authorization', `Bearer ${login.body.body.token}`)
+
+        expect(deleteEmployee.status).toBe(200)
+    })
+}) 

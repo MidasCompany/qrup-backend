@@ -3,8 +3,11 @@ const request = require('supertest');
 const app = require('../../src/app');
 const { test } = require('../../src/config/database');
 const Company = require('../../src/app/models/Company');
-const  User  = require('../../src/app/models/User');
-const { set } = require('../../src/app');
+const Cup = require('../../src/app/models/Cup');
+const User = require('../../src/app/models/User');
+const Employee = require('../../src/app/models/Employee');
+const { company } = require('faker');
+const { findOne } = require('../../src/app/models/User');
 
 describe('GETs', () => {
     beforeAll(() => {  
@@ -16,7 +19,7 @@ describe('GETs', () => {
             where: {
                 cpf: '13826414004'
             }
-        })
+        }) 
 
         //precisa do user_token
         const userLogin = await request(app)
@@ -27,7 +30,7 @@ describe('GETs', () => {
 	        type: "user"
         })
 
-        expect(userLogin.body).toHaveProperty("body.token")
+        expect(userLogin.body).toHaveProperty("body.token") 
        
         const userGet = await request(app)
         .get('/users/' + user.id)
@@ -69,7 +72,7 @@ describe('GETs', () => {
         expect(userCups.status).toBe(200)
     })
 
-    /*it('should add and show a employee from a company', async () => {
+    it('should add and show a employee from a company', async () => {
         //achar a empresa e pegar o company_id
         const company3 = await Company.findOne({
             where: {
@@ -87,7 +90,7 @@ describe('GETs', () => {
 	        type: "employee"
         })
 
-        console.log(ownerLogin.body.body.token)
+        //console.log(ownerLogin.body.body.token)
         expect(ownerLogin.body).toHaveProperty("body.token")
 
         //adicionar employee 
@@ -109,9 +112,9 @@ describe('GETs', () => {
         .set('Authorization', `Bearer ${ownerLogin.body.body.token}`)
 
         expect(getEmployees.status).toBe(200)
-    })*/
+    })
     
-    it('should create a coupon', async () => {
+    it('should create and show a coupon', async () => {
         //saber qual é a empresa 
             //pegar o company_id   
         const company4 = await Company.findOne({
@@ -144,6 +147,11 @@ describe('GETs', () => {
         })
 
         expect(couponPost.status).toBe(200)
+
+        const couponGet = await request(app)
+        .get('/companies/'+ company4.id +'/company-coupons')
+
+        expect(couponGet.status).toBe(200)
     })
 
     it('should show all coupons', async () => {
@@ -153,4 +161,157 @@ describe('GETs', () => {
 
         expect(getCoupons.status).toBe(200)
     })   
+
+    it("should show the user's historic", async () => {
+        //pegar o ID da company
+        const company5 = await Company.findOne({
+            where: {
+                cnpj: "13086620000137"
+            }
+        })
+
+        //pegar o token do empregado
+            //fazer login com empregado
+        const employeeLogin = await request(app)
+        .post('/sessions')
+        .send({
+            cpf: "33670919015",
+            password: "midas",
+            company_id: company5.id,
+            type: "employee"
+        })
+
+        expect(employeeLogin.body).toHaveProperty("body.token")
+
+        const historicGet = await request(app)
+        .get('/historic')
+        .set('Authorization', `Bearer ${employeeLogin.body.body.token}`)
+
+        expect(historicGet.status).toBe(200)
+    })
+
+    //---------------------------------PUTs---------------------------------
+
+    it("should update the user's password", async () => {
+        //token do usuário
+        const user = await User.findOne({
+            where: {
+                email: "caiovini.aa@gmail.com",
+            }
+        })
+        //id do usuário e iniciar sessão
+        const login = await request(app)
+        .post('/sessions')
+        .send({
+            email: "caiovini.aa@gmail.com",
+	        password: "bigoda22",
+	        type: "user"
+        })
+        expect(login.body).toHaveProperty("body.token")
+
+        //nome, email e contact
+        //old password, password, new password
+        const updateUser = await request(app)
+        .put('/users/' + user.id)
+        .set('Authorization', `Bearer ${login.body.body.token}`)
+        .send({
+            name: "Cabeça de pica",
+            email:"caiovini.aa@gmail.com",
+            contact: "91980442949",
+            oldPassword: "bigoda22",
+            password: "caio123",
+            confirmPassword: "caio123"
+        })
+        expect(updateUser.status).toBe(200)
+    })
+
+    it("should update the company's fields", async () => {
+        //token employee
+            //id da empresa
+            //fazer sessão com funcionário  
+        const company6 = await Company.findOne({
+            where: {
+                cnpj: "13086620000137"
+            }
+        })
+
+        const loginEmployee = await request(app)
+        .post('/sessions')
+        .send({
+            cpf: "33670919015",
+            password: "midas",
+            company_id: company6.id,
+            type: "employee"
+        })
+
+        expect(loginEmployee.body).toHaveProperty("body.token")
+        
+        //enviar novoNome, novoEndereço e novoContact
+        const updateCompany = await request(app)
+        .put('/companies/' + company6.id)
+        .set('Authorization', `Bearer ${loginEmployee.body.body.token}`)
+        .send({
+            name: "Midas54",
+	        address: "Travessa Vileta 5498",
+	        contact: "9132462858"
+        })
+
+        expect(updateCompany.status).toBe(200)
+    })
+
+    it("should update the employee's fields", async () => {
+        //id da empresa
+        const company7 = await Company.findOne({
+            where: {
+                cnpj: "13086620000137"
+            }
+        })
+
+        //token do empregado
+        const login = await request(app)
+        .post('/sessions')
+        .send({
+            cpf: "33670919015",
+            password: "midas",
+            company_id: company7.id,
+            type: "employee"
+        })
+
+        expect(login.body).toHaveProperty("body.token")
+
+        //criar um funcionario
+        const employeeCreate = await request(app)
+        .post('/companies/'+ company7.id +'/employees')
+        .set('Authorization', `Bearer ${login.body.body.token}`)
+        .send({
+            name: "Mayana",
+	        cpf: "95841681001",
+	        password: "mayana",
+	        role: 2
+        })
+        
+        expect(employeeCreate.status).toBe(200)
+        
+        //id do funcionário
+        const employeeId = await Employee.findOne({
+            where: {
+                cpf: "95841681001",
+            }
+        })
+        console.log(employeeId)
+        
+        //put da senha do empregado logado
+        const putEmployee = await request(app)
+        .put('/companies/'+ company7.id +'/employees/' + employeeId.id)
+        .set('Authorization', `Bearer ${login.body.body.token}`)
+        .send({
+            name: "Mayana 1000 grau",
+	        role: 3,
+	        oldPassword: "mayana",
+	        password: "mayana123",
+	        confirmPassword: "mayana123"
+        })
+
+        expect(putEmployee.status).toBe(200)
+    })
 })

@@ -26,7 +26,7 @@ describe('Authentication', () => {
     })
 /*
     it('should create a session with a authenticated employee', async () => {
-        const companyID = Company.findOne({
+        const companyID = await Company.findOne({
             where: {
                 cnpj: "13086620000137"
             }
@@ -60,7 +60,7 @@ describe('Authentication', () => {
         })
         expect(response.body).toHaveProperty("body.token")
     })
-
+/*
     it('should create a employee', async () => {
         //achar a company
         const company2 = await Company.findOne({
