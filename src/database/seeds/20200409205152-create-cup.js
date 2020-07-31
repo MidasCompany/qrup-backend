@@ -1,29 +1,27 @@
-'use strict';
-const uuid = require('uuid');
-
+'use strict'
+const uuid = require('uuid')
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-
-    let listCups = []
+    const listCups = []
 
     for (let i = 0; i < 10; i++) {
-      let uuid_p = uuid.v4();
-      let qr = uuid_p.split('-')[0];
+      const uuid_p = uuid.v4()
+      const qr = uuid_p.split('-')[0]
 
       listCups.push({
         id: uuid_p,
-        qr: 'ffa7fcfe',
+        qr,
         type: '400ml',
         created_at: new Date(),
-        updated_at: new Date(),
+        updated_at: new Date()
       })
     }
 
-    return queryInterface.bulkInsert('cups', listCups, {});
+    return queryInterface.bulkInsert('cups', listCups, {})
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('cups', null, {});
+    return queryInterface.bulkDelete('cups', null, {})
   }
-};
+}

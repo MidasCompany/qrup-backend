@@ -5,6 +5,8 @@ const Company = require('../../src/app/models/Company')
 const Employee = require('../../src/app/models/Employee')
 const CompanyCoupons = require('../../src/app/models/CompanyCoupons')
 
+let qr_code = ''
+
 describe('Authentication', () => { // categorizar os testes
   beforeAll(() => {
   })
@@ -131,6 +133,7 @@ describe('Authentication', () => { // categorizar os testes
     const getCups = await request(app)
       .get('/allCups')
     console.log(getCups.body)
+    qr_code = getCups.body.body[0].qr
     expect(getCups.status).toBe(200)
   })
 
@@ -155,7 +158,7 @@ describe('Authentication', () => { // categorizar os testes
       .set('Authorization', `Bearer ${response.body.body.token}`)
       .send({
         description: 'copo do Pocoyo',
-        qr: 'ffa7fcfe'
+        qr: qr_code
       })
     console.log(cup.body)
     expect(cup.status).toBe(200)
@@ -185,7 +188,7 @@ describe('Authentication', () => { // categorizar os testes
       .set('Authorization', `Bearer ${userLogin.body.body.token}`)
       .send({
         description: 'copo do Pocoyo',
-        qr: 'ffa7fcfe'
+        qr: qr_code
       })
     expect(cup.status).toBe(200)
 
@@ -222,7 +225,7 @@ describe('Authentication', () => { // categorizar os testes
     expect(couponCreate.status).toBe(200)
 
     // achar coupon
-    const coupon = await CompanyCoupons.findOne({
+    await CompanyCoupons.findOne({
       where: {
         code: 'tercalivrecaralho'
       }
@@ -241,7 +244,7 @@ describe('Authentication', () => { // categorizar os testes
       .set('Authorization', `Bearer ${employeeLogin.body.body.token}`)
       .send({
         // qr
-        qr: 'ffa7fcfe',
+        qr: qr_code,
         // type: "read"
         type: 'read'
       })
@@ -272,7 +275,7 @@ describe('Authentication', () => { // categorizar os testes
       .set('Authorization', `Bearer ${userLogin.body.body.token}`)
       .send({
         description: 'copo do Pocoyo',
-        qr: 'ffa7fcfe'
+        qr: qr_code
       })
     expect(cup.status).toBe(200)
 
@@ -360,7 +363,7 @@ describe('Authentication', () => { // categorizar os testes
       .set('Authorization', `Bearer ${login2.body.body.token}`)
       .send({
         description: 'copo do caio',
-        qr: 'ffa7fcfe'
+        qr: qr_code
       })
 
     expect(attachCup.status).toBe(200)
