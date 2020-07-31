@@ -9,13 +9,12 @@
     "migrate": "sequelize db:migrate",
     "migrate_undo": "sequelize db:migrate:undo:all",
     "seed": "sequelize db:seed:all",
-    "seed_undo": "sequelize db:seed:undo",
+    "seed_undo": "sequelize db:seed:undo:all",
     "dev": "yarn migrate && yarn seed  && nodemon --exec node -r dotenv/config src/server.js --ignore test",
     "dev_reset": "yarn seed_undo && yarn migrate_undo && yarn dev",
     "lint": "eslint src/**/*.js",
-    "pretest": "set NODE_ENV=test&& yarn migrate_undo && yarn seed_undo",
-    "test": "set NODE_ENV=test&& yarn migrate && yarn seed && jest",
-    "posttest": "set NODE_ENV=test&& yarn migrate_undo && yarn seed_undo"
+    "pretest": "cross-env-shell NODE_ENV=test \"rimraf test.sqlite && yarn migrate && yarn seed\"",
+    "test": "jest"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -31,6 +30,7 @@
     "multer": "^1.4.2",
     "pg": "^7.12.1",
     "pg-hstore": "^2.3.3",
+    "rimraf": "^3.0.2",
     "sequelize": "^5.21.2",
     "sequelize-cli": "^5.5.1",
     "sqlite3": "^4.1.1",
@@ -39,6 +39,7 @@
     "yup": "^0.28.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.2",
     "eslint": "^7.1.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.2",
