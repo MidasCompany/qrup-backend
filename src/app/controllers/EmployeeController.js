@@ -7,7 +7,7 @@ const {
 } = require('sequelize')
 
 class EmployeeController {
-  async store (req, res) {
+  async store (req, res, next) {
     const schemaCreateEmployee = Yup.object().shape({
       name: Yup.string().required(),
       cpf: Yup.string().length(11).required(),
@@ -83,7 +83,7 @@ class EmployeeController {
     })
   }
 
-  async update (req, res) {
+  async update (req, res, next) {
     if (req.employee.role !== 1) {
       res.locals.payload = {
         status: 400,
@@ -147,7 +147,7 @@ class EmployeeController {
     return next();
   }
 
-  async index (req, res) {
+  async index (req, res, next) {
     if (req.employee.role !== 1) {
       res.locals.payload = {
         status: 400,
@@ -175,14 +175,14 @@ class EmployeeController {
       return next();
     }
     res.locals.payload = {
-      status: 400,
+      status: 200,
       code: 'employeeFound',
       body: employees
     }
     return next();
   }
 
-  async delete (req, res) {
+  async delete (req, res, next) {
     if (req.employee.role !== 1) {
       res.locals.payload = {
         status: 400,

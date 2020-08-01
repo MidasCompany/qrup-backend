@@ -13,7 +13,8 @@
     "dev": "yarn migrate && yarn seed  && nodemon --exec node -r dotenv/config src/server.js --ignore test",
     "dev_reset": "yarn seed_undo && yarn migrate_undo && yarn dev",
     "lint": "eslint src/**/*.js",
-    "test": "export NODE_ENV=test && yarn migrate && jest"
+    "pretest": "cross-env-shell NODE_ENV=test \"rimraf test.sqlite && yarn migrate && yarn seed\"",
+    "test": "jest"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -21,6 +22,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "factory-girl": "^5.0.4",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.25.1",
     "mongoose": "^5.8.13",
@@ -28,6 +30,7 @@
     "multer": "^1.4.2",
     "pg": "^7.12.1",
     "pg-hstore": "^2.3.3",
+    "rimraf": "^3.0.2",
     "sequelize": "^5.21.2",
     "sequelize-cli": "^5.5.1",
     "sqlite3": "^4.1.1",
@@ -36,15 +39,16 @@
     "yup": "^0.28.0"
   },
   "devDependencies": {
-    "faker": "^4.1.0",
-    "jest": "^26.0.1",
-    "supertest": "^4.0.2",
-    "nodemon": "^2.0.2",
+    "cross-env": "^7.0.2",
     "eslint": "^7.1.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
+    "eslint-plugin-standard": "^4.0.1",
+    "faker": "^4.1.0",
+    "jest": "^26.0.1",
+    "nodemon": "^2.0.2",
+    "supertest": "^4.0.2"
   }
 }

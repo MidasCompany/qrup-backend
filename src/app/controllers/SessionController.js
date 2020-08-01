@@ -8,7 +8,7 @@ const Company = require('../models/Company')
 const CompanyEmployee = require('../models/CompanyEmployee')
 
 class SessionController {
-  async store (req, res) {
+  async store (req, res, next) {
     const schemaSession = Yup.object().shape({
       type: Yup.string().required(),
       password: Yup.string().required().min(4),

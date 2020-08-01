@@ -5,7 +5,7 @@ const CompanyEmployee = require('../models/CompanyEmployee')
 const { validate } = require('cnpj')
 const validarCpf = require('validar-cpf')
 class CompanyController {
-  async store (req, res) {
+  async store (req, res, next) {
     const schemaCreateCompany = Yup.object().shape({
       nameCompany: Yup.string().required(),
       address: Yup.string().required(),
@@ -110,7 +110,7 @@ class CompanyController {
     })
   }
 
-  async update (req, res) {
+  async update (req, res, next) {
     if (req.employee.role !== 1) {
 
       res.locals.payload = {
@@ -164,7 +164,7 @@ class CompanyController {
     return next();
   }
 
-  async index (req, res) {
+  async index (req, res, next) {
     const companies = await Company.findAll()
 
     if (companies < 1) {

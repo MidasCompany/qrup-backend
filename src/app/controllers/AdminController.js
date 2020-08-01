@@ -1,7 +1,7 @@
 const Cup = require('../models/Cup')
 
 class AdminController {
-  async allCups (req, res) {
+  async allCups (req, res, next) {
     res.locals.payload = {
       status: 200,
       code: 'allCups',
